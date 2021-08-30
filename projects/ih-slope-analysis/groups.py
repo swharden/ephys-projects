@@ -1,0 +1,108 @@
+opto = [
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21124006.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21124013.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21124020.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21124026.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21124033.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21126007.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21126016.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21126030.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21126050.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21126056.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21218033.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21219006.abf"
+]
+
+opto_L368 = [
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21218077.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21219013.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21219039.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21219069.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21323006.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21323036.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21323047.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21325007.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21325019.abf",
+]
+
+tgot10nm = [
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20804007.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20804030.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20804043.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20804048.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20804060.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20804066.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20805008.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20805029.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20805035.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20811011.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20811021.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20817012.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20831011.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20831017.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/2021_05_14_DIC1_0008.abf",
+]
+
+tgot10nm_L368 = [
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20805041.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20805047.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20805053.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20806018.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20806036.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20811034.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20811041.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20817020.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20817026.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20817032.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20817039.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20901022.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20901035.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20902011.abf",
+]
+
+tgot50nm = [
+    "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/20723038.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/20723029.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/20724011.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/20724017.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/20724023.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/20724027.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/20724033.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/20724045.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/2021_05_13_DIC1_0005.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/2021_05_13_DIC1_0021.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/2021_05_13_DIC1_0025.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/2021_05_13_DIC3_0050.abf",
+]
+
+tgot50nm_NAc = [
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20n19022.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20n19029.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20n19036.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20n19052.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d03006.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d03032.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d03055.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04012.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04023.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04030.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04038.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04045.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04052.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d16012.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d16020.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d16035.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d17022.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d17028.abf",
+]
+
+tgot50nm_L368 = [
+    "X:/Data/C57/TGOT on PVT/2020-07-27 50nM TGOT w L368/20727010.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-27 50nM TGOT w L368/20727026.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-27 50nM TGOT w L368/20727032.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-27 50nM TGOT w L368/20727039.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-27 50nM TGOT w L368/20728005.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-27 50nM TGOT w L368/20728011.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-27 50nM TGOT w L368/20728026.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-27 50nM TGOT w L368/2021_05_13_DIC3_0043.abf",
+]
