@@ -5,10 +5,13 @@ import reports
 import matplotlib.pyplot as plt
 
 # initial filtering to reduce sweep-to-sweep current variation
-filterSize = 10
+INITIAL_FILTER_SIZE = 10
 
 # number of points to include in each slope calculation (linear regression)
-regressionSize = 17
+REGRESSION_SIZE = 17
+
+# threshold beyond which cells are considered responders
+RESPONDER_SLOPE_THRESHOLD = -1.5
 
 
 def makeReport(outFolder: pathlib.Path, abfPaths: list[pathlib.Path], title: str):
@@ -21,8 +24,10 @@ def makeReport(outFolder: pathlib.Path, abfPaths: list[pathlib.Path], title: str
 
     for abfPath in abfPaths:
         print(abfPath)
+
+        # this step does all the analysis and generates the plot in memory
         baselineSlope, drugSlope = slopeTools.getBaselineAndMaxDrugSlope(
-            abfPath, filterSize, regressionSize, show=False)
+            abfPath, INITIAL_FILTER_SIZE, REGRESSION_SIZE, show=False)
 
         baselineSlopes.append(baselineSlope)
         drugSlopes.append(drugSlope)
@@ -32,7 +37,10 @@ def makeReport(outFolder: pathlib.Path, abfPaths: list[pathlib.Path], title: str
         report.addCode(f"path: {abfPath}")
         report.addCode(f"baseline slope: {baselineSlope}")
         report.addCode(f"drug slope: {drugSlope}")
-        report.addCode(f"delta slope: {drugSlope - baselineSlope}")
+        deltaSlope = drugSlope - baselineSlope
+        responseClass = 'responsive' if deltaSlope < RESPONDER_SLOPE_THRESHOLD else 'unresponsive'
+        report.addCode(f"delta slope: {deltaSlope} " +
+                       f"<span class='{responseClass}'>{responseClass}</span>")
         report.addFigure(plt.gcf())
         plt.close()
         report.addHr()
@@ -48,9 +56,9 @@ def addTable(report: reports.ReportPage, abfIDs, baselineSlopes, drugSlopes):
     report.addHtml("<table>")
     report.addHtml("<tr>")
     report.addHtml("<th>ABF</th>")
-    report.addHtml("<th>baseline slope</th>")
-    report.addHtml("<th>drug slope</th>")
-    report.addHtml("<th>delta slope</th>")
+    report.addHtml("<th>baseline (pA/min)</th>")
+    report.addHtml("<th>drug (pA/min)</th>")
+    report.addHtml("<th>delta (pA/min)</th>")
     report.addHtml("</tr>")
 
     for i in range(len(baselineSlopes)):
@@ -58,7 +66,9 @@ def addTable(report: reports.ReportPage, abfIDs, baselineSlopes, drugSlopes):
         report.addHtml(f"<td>{abfIDs[i]}</td>")
         report.addHtml(f"<td>{baselineSlopes[i]}</td>")
         report.addHtml(f"<td>{drugSlopes[i]}</td>")
-        report.addHtml(f"<td>{drugSlopes[i] - baselineSlopes[i]}</td>")
+        deltaSlope = drugSlopes[i] - baselineSlopes[i]
+        responseClass = 'responsive' if deltaSlope < RESPONDER_SLOPE_THRESHOLD else 'unresponsive'
+        report.addHtml(f"<td class='{responseClass}'>{deltaSlope}</td>")
         report.addHtml("</tr>")
 
     report.addHtml("</table>")
