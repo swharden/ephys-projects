@@ -72,4 +72,3 @@ class ReportPage:
             f.write("</head>")
             f.write("\n".join(self.body))
             f.write("</html>")
-        print(f"wrote: {filePath}")

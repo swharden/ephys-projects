@@ -4,28 +4,11 @@ import slopeTools
 import reports
 import matplotlib.pyplot as plt
 
+# initial filtering to reduce sweep-to-sweep current variation
 filterSize = 10
+
+# number of points to include in each slope calculation (linear regression)
 regressionSize = 17
-
-
-def addTable(report: reports.ReportPage, abfIDs, baselineSlopes, drugSlopes):
-
-    report.addHeading("Table")
-    report.addHtml("<table>")
-    report.addHtml("<tr>")
-    report.addHtml("<th>ABF</th>")
-    report.addHtml("<th>baseline slope</th>")
-    report.addHtml("<th>drug slope</th>")
-    report.addHtml("</tr>")
-
-    for i in range(len(baselineSlopes)):
-        report.addHtml("<tr>")
-        report.addHtml(f"<td>{abfIDs[i]}</td>")
-        report.addHtml(f"<td>{baselineSlopes[i]}</td>")
-        report.addHtml(f"<td>{drugSlopes[i]}</td>")
-        report.addHtml("</tr>")
-
-    report.addHtml("</table>")
 
 
 def makeReport(outFolder: pathlib.Path, abfPaths: list[pathlib.Path], title: str):
@@ -56,6 +39,26 @@ def makeReport(outFolder: pathlib.Path, abfPaths: list[pathlib.Path], title: str
     addTable(report, abfIDs, baselineSlopes, drugSlopes)
 
     report.save()
+
+
+def addTable(report: reports.ReportPage, abfIDs, baselineSlopes, drugSlopes):
+
+    report.addHeading("Table")
+    report.addHtml("<table>")
+    report.addHtml("<tr>")
+    report.addHtml("<th>ABF</th>")
+    report.addHtml("<th>baseline slope</th>")
+    report.addHtml("<th>drug slope</th>")
+    report.addHtml("</tr>")
+
+    for i in range(len(baselineSlopes)):
+        report.addHtml("<tr>")
+        report.addHtml(f"<td>{abfIDs[i]}</td>")
+        report.addHtml(f"<td>{baselineSlopes[i]}</td>")
+        report.addHtml(f"<td>{drugSlopes[i]}</td>")
+        report.addHtml("</tr>")
+
+    report.addHtml("</table>")
 
 
 if __name__ == "__main__":
