@@ -32,6 +32,7 @@ def makeReport(outFolder: pathlib.Path, abfPaths: list[pathlib.Path], title: str
         report.addCode(f"path: {abfPath}")
         report.addCode(f"baseline slope: {baselineSlope}")
         report.addCode(f"drug slope: {drugSlope}")
+        report.addCode(f"delta slope: {drugSlope - baselineSlope}")
         report.addFigure(plt.gcf())
         plt.close()
         report.addHr()
@@ -49,6 +50,7 @@ def addTable(report: reports.ReportPage, abfIDs, baselineSlopes, drugSlopes):
     report.addHtml("<th>ABF</th>")
     report.addHtml("<th>baseline slope</th>")
     report.addHtml("<th>drug slope</th>")
+    report.addHtml("<th>delta slope</th>")
     report.addHtml("</tr>")
 
     for i in range(len(baselineSlopes)):
@@ -56,6 +58,7 @@ def addTable(report: reports.ReportPage, abfIDs, baselineSlopes, drugSlopes):
         report.addHtml(f"<td>{abfIDs[i]}</td>")
         report.addHtml(f"<td>{baselineSlopes[i]}</td>")
         report.addHtml(f"<td>{drugSlopes[i]}</td>")
+        report.addHtml(f"<td>{drugSlopes[i] - baselineSlopes[i]}</td>")
         report.addHtml("</tr>")
 
     report.addHtml("</table>")
