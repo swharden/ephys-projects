@@ -76,7 +76,7 @@ tgot10nm_L368 = [
     "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20811041.abf",
     "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20817020.abf",
     "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20817026.abf",
-    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20817032.abf",
+    "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20817032.abf",  # not in rave
     "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20817039.abf",
     "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20901022.abf",
     "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20901035.abf",

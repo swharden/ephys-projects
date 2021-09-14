@@ -77,12 +77,12 @@ def addTable(report: reports.ReportPage, abfIDs, baselineSlopes, drugSlopes):
 if __name__ == "__main__":
     outFolder = pathlib.Path(__file__).parent.joinpath("output")
 
-    #makeReport(outFolder, groups.tgot10nm, "TGOT (10 nM)")
-    #makeReport(outFolder, groups.tgot10nm_L368, "TGOT (10 nM) +L368")
-    #makeReport(outFolder, groups.tgot10nm_NAc, "TGOT (10 nM) to NAc")
+    makeReport(outFolder, groups.tgot10nm, "TGOT (10 nM)")
+    makeReport(outFolder, groups.tgot10nm_L368, "TGOT (10 nM) +L368")
+    makeReport(outFolder, groups.tgot10nm_NAc, "TGOT (10 nM) to NAc")
 
-    #makeReport(outFolder, groups.tgot50nm, "TGOT (50 nM) all")
-    #makeReport(outFolder, groups.tgot50nm_L368, "TGOT (50 nM) +L368")
+    makeReport(outFolder, groups.tgot50nm, "TGOT (50 nM) all")
+    makeReport(outFolder, groups.tgot50nm_L368, "TGOT (50 nM) +L368")
 
     makeReport(outFolder, groups.opto, "Opto")
     makeReport(outFolder, groups.opto_L368, "Opto +L368")
