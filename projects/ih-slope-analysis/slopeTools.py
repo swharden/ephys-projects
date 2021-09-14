@@ -37,24 +37,24 @@ def getBaselineAndMaxDrugSlope(abfFilePath, filterSize = 15, regressionSize = 15
     
     rawCurrents = abfTools.getMeanBySweep(abf, 3, 10)
     rawTimes = abf.sweepTimesMin
-    plt.plot(rawTimes, rawCurrents, '.', alpha=.5)
+    plt.plot(rawTimes, rawCurrents, 'ko', alpha=.2, fillstyle='none', label="raw data")
 
     smoothCurrents = statsTools.smoothY(rawCurrents, filterSize)
     smoothTimes = statsTools.smoothY(rawTimes, filterSize)
-    plt.plot(smoothTimes, smoothCurrents, '-')
+    plt.plot(smoothTimes, smoothCurrents, '-', color="C1", alpha=.5, label="smoothed data")
     
     # determine drug region based on first tag time
     drugTimeStart = abfTools.getFirstTagTime(abfFilePath)
     drugSearchWidth = 5 # minutes
     drugTimeEnd = drugTimeStart + drugSearchWidth
-    plt.axvspan(drugTimeStart, drugTimeEnd, color='r', alpha=.1)
+    plt.axvspan(drugTimeStart, drugTimeEnd, color='r', alpha=.1, lw=0)
     
     # determine baseline region based on drug time
     baselineTimeStart = drugTimeStart - 4
     baselineTimeEnd = drugTimeStart
     baselineIndexStart, baselineIndexEnd = statsTools.rangeIndex(smoothTimes, baselineTimeStart, baselineTimeEnd)
     baselineCurrent = smoothCurrents[baselineIndexStart:baselineIndexEnd]
-    plt.axvspan(baselineTimeStart, baselineTimeEnd, color='b', alpha=.1)
+    plt.axvspan(baselineTimeStart, baselineTimeEnd, color='b', alpha=.1, lw=0)
     
     # isolate smoothed baseline currents
     baselineCurrents = smoothCurrents[baselineIndexStart:baselineIndexEnd]
@@ -64,7 +64,8 @@ def getBaselineAndMaxDrugSlope(abfFilePath, filterSize = 15, regressionSize = 15
     # calculate linear regression of baseline region
     baselineRegressionXs = np.linspace(baselineTimeStart, baselineTimeEnd)
     baselineRegressionYs = baselineRegressionXs * baselineSlope + baselineIntercept
-    plt.plot(baselineRegressionXs, baselineRegressionYs, color='b', ls='--')
+    plt.plot(baselineRegressionXs, baselineRegressionYs, color='b', ls='--', label="baseline slope")
+    plt.grid(alpha=.5, ls='--')
     if show:
         print(f"Baseline slope: {baselineSlope} pA/min")
     
@@ -74,7 +75,9 @@ def getBaselineAndMaxDrugSlope(abfFilePath, filterSize = 15, regressionSize = 15
     segTimesOffset = (regressionSize * sweepPeriod)
     segTimes = np.arange(len(segSlopes)) * sweepPeriod + segTimesOffset    
     plt.subplot(212, sharex = ax1)
-    plt.plot(segTimes, segSlopes, '.')
+    plt.axvspan(baselineTimeStart, baselineTimeEnd, color='b', alpha=.1, lw=0)
+    plt.plot(segTimes, segSlopes, 'k.-', lw=.5, ms=2, label="local slope")
+    plt.grid(alpha=.5, ls='--')
     
     # search the drug range for the most negative slope
     plt.axvspan(drugTimeStart, drugTimeEnd, color='r', alpha=.1)
@@ -83,12 +86,20 @@ def getBaselineAndMaxDrugSlope(abfFilePath, filterSize = 15, regressionSize = 15
     drugSlopeMinTime = segTimes[drugSlopeMinIndex]
     if show:
         print(f"Drug slope: {drugSlopeMin} pA/min")
+
     plt.axvline(drugSlopeMinTime, color='r', ls='--')
-    plt.axhline(drugSlopeMin, color='r', ls='--')
-    plt.axhline(baselineSlope, color='b', ls='--')
+    plt.axhline(drugSlopeMin, color='r', ls='--', label="peak effect slope")
+    plt.axhline(baselineSlope, color='b', ls='--', label="baseline slope")
     
     plt.ylabel("Slope (pA/min)")
     plt.xlabel("Time (minutes)")
+    plt.legend(fontsize=8)
+    plt.tight_layout()
+
+    # add some marks to the top plot
+    plt.subplot(211)
+    plt.axvline(drugSlopeMinTime, color='r', ls='--', label="peak effect")
+    plt.legend(fontsize=8)
     
     if show:
         plt.show()
