@@ -1,13 +1,11 @@
 """
-Slope tools contains helper functions for measuring slow changes in holding current
-using linear regressions. 
+This file contains helper functions for calculating holding 
+current slopes using linear regressions over moving windows.
 """
 
-import pandas as pd
 import matplotlib.pyplot as plt
 import scipy.stats
 import numpy as np
-import os
 import pyabf
 
 
@@ -107,6 +105,28 @@ def rangeMin(ys, xs, rangeStart, rangeEnd):
     return rangeMin
 
 
+def getSingleSegmentSlope(segment, samplePeriod):
+    """
+    Return the slope of a linear line fitted to a single segment.
+    Sample period must be in minutes, and returned slope will be pA/min.
+    """
+    xs = np.arange(len(segment)) * samplePeriod
+    slope, intercept, r, p, stdErr = scipy.stats.linregress(xs, segment)
+    return slope
+
+
+def getAllSegmentSlopes(segments, samplePeriod):
+    """
+    Given a list of segments, return a list of slopes (one per segment).
+    Sample period must be in minutes, and returned slopes will be pA/min.
+    """
+    slopes = []
+    for segment in segments:
+        slope = getSingleSegmentSlope(segment, samplePeriod)
+        slopes.append(slope)
+    return slopes
+
+
 def getBaselineAndMaxDrugSlope(abfFilePath, filterSize=15, regressionSize=15, show=True):
     """
     This method analyzes holding current in an ABF and returns baseline slope and drug slope.
@@ -203,86 +223,6 @@ def getBaselineAndMaxDrugSlope(abfFilePath, filterSize=15, regressionSize=15, sh
         plt.show()
 
     return baselineSlope, drugSlopeMin
-
-
-def getSingleSegmentSlope(segment, samplePeriod):
-    """
-    Return the slope of a linear line fitted to a single segment.
-    Sample period must be in minutes, and returned slope will be pA/min.
-    """
-    xs = np.arange(len(segment)) * samplePeriod
-    slope, intercept, r, p, stdErr = scipy.stats.linregress(xs, segment)
-    return slope
-
-
-def getAllSegmentSlopes(segments, samplePeriod):
-    """
-    Given a list of segments, return a list of slopes (one per segment).
-    Sample period must be in minutes, and returned slopes will be pA/min.
-    """
-    slopes = []
-    for segment in segments:
-        slope = getSingleSegmentSlope(segment, samplePeriod)
-        slopes.append(slope)
-    return slopes
-
-
-def getRegression(ys, samplePeriod):
-    """
-    Make linear regression and return the slope and intercept 
-    based on the given ys and sample period.
-    """
-
-    xs = np.arange(len(ys)) * samplePeriod
-    slope, intercept, r, p, stdErr = scipy.stats.linregress(xs, ys)
-
-    return slope, intercept
-
-
-def consecutiveSlopes(ys, xs):
-    """
-    Get slopes of consecutive data points.
-    """
-    slopes = []
-    samplePeriod = xs[1]-xs[0]
-    for i in range(len(ys)-1):
-        slope = (ys[i+1]-ys[i])/(samplePeriod)
-        slopes.append(slope)
-    return slopes
-
-
-def identifyBySlope(abfIDs, slopesDrug, slopesBaseline, threshold):
-    """
-    Identify a responder by comparing the change of slopes to a given threshold.
-    """
-    responders = []
-    nonResponders = []
-    for i in range(len(abfIDs)):
-
-        deltaSlope = round(slopesDrug[i]-slopesBaseline[i], 3)   # pA / min
-        if deltaSlope > threshold:
-            nonResponders.append(abfIDs[i])
-
-        else:
-            responders.append(abfIDs[i])
-
-    return responders, nonResponders
-
-
-def identifyByCurrent(abfIDs, slopesDrug, slopesBaseline, threshold):
-    """
-    Identify a responder by asking whether the change of current is BIGGER than a given threshold.
-    """
-    responders = []
-    nonResponders = []
-    for i in range(len(abfIDs)):
-        deltaCurrent = round(slopesDrug[i]-slopesBaseline[i], 3)   # pA / min
-        if deltaCurrent > threshold:
-            nonResponders.append(abfIDs[i])
-        else:
-            responders.append(abfIDs[i])
-
-    return responders, nonResponders
 
 
 if __name__ == "__main__":
