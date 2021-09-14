@@ -5,16 +5,17 @@ opto = [
     "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21124026.abf",
     "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21124033.abf",
     "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21126007.abf",
-    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21126016.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21126016.abf",  # not in rave
     "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21126030.abf",
     "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21126050.abf",
     "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21126056.abf",
     "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21218033.abf",
-    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21219006.abf"
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21219006.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21218083.abf",  # found in rave
 ]
 
 opto_L368 = [
-    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21218077.abf",
+    "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21218077.abf",  # not in rave
     "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21219013.abf",
     "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21219039.abf",
     "X:/Data/C57/TGOT on PVT/2020-10-12 OT-ChR2/21219069.abf",
@@ -41,6 +42,28 @@ tgot10nm = [
     "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20831011.abf",
     "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/20831017.abf",
     "X:/Data/C57/TGOT on PVT/2020-07-28 10nM TGOT on PVT/2021_05_14_DIC1_0008.abf",
+]
+
+tgot10nm_NAc = [
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20n19022.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20n19029.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20n19036.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20n19052.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d03006.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d03032.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d03055.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04012.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04023.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04030.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04038.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04045.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04052.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d16012.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d16020.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d16035.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d17022.abf",
+    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d17028.abf",
+    # "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20n19038.abf",  # found in rave
 ]
 
 tgot10nm_L368 = [
@@ -73,27 +96,6 @@ tgot50nm = [
     "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/2021_05_13_DIC1_0021.abf",
     "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/2021_05_13_DIC1_0025.abf",
     "X:/Data/C57/TGOT on PVT/2020-07-23 50nM TGOT on PVT/2021_05_13_DIC3_0050.abf",
-]
-
-tgot50nm_NAc = [
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20n19022.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20n19029.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20n19036.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20n19052.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d03006.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d03032.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d03055.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04012.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04023.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04030.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04038.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04045.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d04052.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d16012.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d16020.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d16035.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d17022.abf",
-    "X:/Data/C57/TGOT on PVT/2020-11-18 TGOT on PVT-NAc neurons/20d17028.abf",
 ]
 
 tgot50nm_L368 = [
