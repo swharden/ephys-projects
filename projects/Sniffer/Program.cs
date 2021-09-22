@@ -14,132 +14,56 @@ namespace Sniffer
             string htmlOutputPath = Path.Combine(basePath, "report.html");
 
             List<Experiment> experiments = new();
-            Experiment experiment = null;
+            Experiment exp = null;
+
             foreach (string line in File.ReadLines(yamlFilePath))
             {
                 if (line.StartsWith("#"))
                     continue;
 
-                if (line.StartsWith("      - "))
+                if (line.StartsWith("  \"") && line.Contains(":"))
                 {
-                    if (experiment is not null)
-                        experiments.Add(experiment);
-
                     string id = line.Split("\"")[1];
-                    experiment = new Experiment(id);
+                    exp = new Experiment(id);
+                    experiments.Add(exp);
+                    continue;
                 }
 
-                if (line.StartsWith("          - "))
+                if (line.StartsWith("    ") && line.Contains(":"))
                 {
-                    experiment.Process(line);
+                    string[] parts = line.Split(":", 2);
+                    string key = parts[0].Trim();
+                    string val = parts[1].Trim().Trim('\'');
+                    exp.Add(key, val);
                 }
             }
 
-            Console.WriteLine($"Read {experiments.Count} experiments");
-            WriteReport(experiments.ToArray(), htmlOutputPath);
-        }
-
-        static void WriteReport(Experiment[] experiments, string filePath)
-        {
             StringBuilder sb = new();
-            sb.AppendLine("<html>");
-            sb.AppendLine("<head>");
-            sb.AppendLine("<style>");
-            sb.AppendLine("img {max-height: 400px;}");
-            sb.AppendLine("</style>");
-            sb.AppendLine("</head>");
-            sb.AppendLine("<body>");
-            sb.AppendLine("<table>");
-            AddHeader(sb);
-            foreach (Experiment experiment in experiments)
-                AddRow(sb, experiment);
-            sb.AppendLine("</table>");
-            sb.AppendLine("</body>");
-            sb.AppendLine("</html>");
-
-            File.WriteAllText(filePath, sb.ToString());
-            Console.WriteLine($"wrote: {filePath}");
+            foreach (Experiment ex in experiments)
+                sb.AppendLine(ex.GetHtml());
+            SavePage(sb.ToString(), htmlOutputPath);
         }
 
-        static void AddHeader(StringBuilder sb)
+        private static void SavePage(string html, string outFile)
         {
-            sb.AppendLine("<tr>");
-            sb.AppendLine("<th>Reference Image</th>");
-            sb.AppendLine("<th>ROIs</th>");
-            sb.AppendLine("<th>Video</th>");
-            sb.AppendLine("<tr>");
-        }
-
-        static void AddRow(StringBuilder sb, Experiment experiment)
-        {
-            sb.AppendLine("<tr>");
-            try
-            {
-                sb.AppendLine($"<td><a href='{experiment.MergeImageFile}'><img src='{experiment.MergeImageFile}' /></a></td>");
-                sb.AppendLine($"<td><a href='{experiment.RoiImageFile}'><img src='{experiment.RoiImageFile}' /></a></td>");
-                sb.AppendLine($"<td><video controls src='{experiment.VideoFile}' ></video></td>");
-                Console.WriteLine($"Experiment {experiment.ID}: added");
-            }
-            catch
-            {
-                Console.WriteLine($"Experiment {experiment.ID}: ERROR");
-            }
-            sb.AppendLine("</tr>");
+            string template = @"<!doctype html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU' crossorigin='anonymous'>
+    <title>Sniffer Report</title>
+  </head>
+  <body>
+    <div class='container'>
+    <h1>Sniffer Experiments (K-Glu)</h1>
+    {{CONTENT}}
+    </div>
+    <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js' integrity='sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ' crossorigin='anonymous'></script>
+  </body>
+</html>";
+            File.WriteAllText(outFile, template.Replace("{{CONTENT}}", html));
+            Console.WriteLine($"Wrote: {outFile}");
         }
     }
-
-    class Experiment
-    {
-        public readonly string ID;
-
-        string BasePath;
-
-        string TSeries;
-        public DirectoryInfo TSeriesFolder => new(Path.Combine(BasePath, TSeries));
-
-        string MergeImage;
-        public string MergeImageFile => Path.Combine(BasePath, MergeImage);
-
-        string RoiImage;
-        public string RoiImageFile => Path.Combine(BasePath, RoiImage);
-
-        string Video;
-        public string VideoFile => Path.Combine(BasePath, Video);
-
-        string Notes;
-
-        public Experiment(string id)
-        {
-            ID = id;
-        }
-
-        public void Process(string line)
-        {
-            line = line.Trim().TrimStart('-').Trim();
-            string[] parts = line.Split(":", 2);
-            string key = parts[0].Trim();
-            string val = parts[1].Trim().Trim('\'');
-
-            switch (key)
-            {
-                case "path":
-                    BasePath = val.Replace("\\", "/").Replace("//spike/X_Drive/", "X:/");
-                    break;
-                case "tseries":
-                    TSeries = val;
-                    break;
-                case "mergeImage":
-                    MergeImage = val;
-                    break;
-                case "roiImage":
-                    RoiImage = val;
-                    break;
-                case "video":
-                    Video = val;
-                    break;
-            }
-        }
-    }
-
 }
-
