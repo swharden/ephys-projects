@@ -20,7 +20,7 @@ namespace PVInfo
             foreach (var pvFolderPath in Directory.GetDirectories(folderPath))
             {
                 PVScan.IScan scan = PVScan.ScanFactory.FromPVFolder(pvFolderPath);
-                sb.AppendLine($"<h1>{scan.ScanType}: {Path.GetDirectoryName(pvFolderPath)}</h1>");
+                sb.AppendLine($"<h1>{scan.ScanType}: {Path.GetFileName(pvFolderPath)}</h1>");
                 sb.AppendLine($"<pre>{scan.GetSummary()}</pre>");
                 ShowImages(pvFolderPath, sb);
                 sb.AppendLine("<hr>");
@@ -36,6 +36,7 @@ namespace PVInfo
             string pvFolderName = Path.GetFileName(pvFolderPath);
             List<string> tifFiles = new();
             List<string> imageFiles = new();
+            List<string> notesFiles = new();
 
             string[] supportedExtensions = { ".jpg", ".gif", ".png" };
             foreach (string subFolderPath in Directory.GetDirectories(pvFolderPath))
@@ -47,10 +48,22 @@ namespace PVInfo
                     if (ext == ".tif")
                         tifFiles.Add(filePath);
 
+                    if (ext == ".txt")
+                        notesFiles.Add(filePath);
+
                     string imageUrl = pvFolderName + "/" + Path.GetFileName(subFolderPath) + "/" + Path.GetFileName(filePath);
                     if (supportedExtensions.Contains(ext))
                         imageFiles.Add(imageUrl);
                 }
+            }
+
+            if (notesFiles.Count > 0)
+            {
+                sb.AppendLine("<pre>");
+                sb.AppendLine($"Experiment Notes:");
+                foreach (string notesFile in notesFiles)
+                    sb.AppendLine(File.ReadAllText(notesFile));
+                sb.AppendLine("</pre>");
             }
 
             sb.AppendLine("<pre>");
