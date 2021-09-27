@@ -31,6 +31,7 @@ namespace PVInfo.PVScan
         public readonly double PmtGain1;
         public readonly double PmtGain2;
         public readonly int RastersPerFrame;
+        public readonly ZDevice ZDevice;
         public readonly XDocument XmlDoc;
 
         public PVState(string path)
@@ -49,6 +50,7 @@ namespace PVInfo.PVScan
             OpticalZoom = GetOpticalZoom(XmlDoc);
             (PmtGain1, PmtGain2) = GetPmtGains(XmlDoc);
             RastersPerFrame = GetRastersPerFrame(XmlDoc);
+            ZDevice = GetZDevice(XmlDoc);
         }
 
         public string GetSummary()
@@ -71,6 +73,7 @@ namespace PVInfo.PVScan
             sb.AppendLine($"PMT1 (R) gain: {PmtGain1}");
             sb.AppendLine($"PMT2 (G) gain: {PmtGain2}");
             sb.AppendLine($"Frame averaging: {RastersPerFrame}");
+            sb.AppendLine($"Z device: {ZDevice}");
             return sb.ToString();
         }
 
@@ -190,5 +193,16 @@ namespace PVInfo.PVScan
 
         private static int GetRastersPerFrame(XDocument xmlDoc) =>
             int.Parse(GetPVStateValue(xmlDoc, "rastersPerFrame"));
+
+        private static int GetZDeviceIndex(XDocument xmlDoc) =>
+            int.Parse(GetPVStateValue(xmlDoc, "zDevice"));
+
+        private static ZDevice GetZDevice(XDocument xmlDoc) =>
+            GetZDeviceIndex(xmlDoc) switch
+            {
+                0 => ZDevice.Motor,
+                1 => ZDevice.Piezo,
+                _ => ZDevice.Unknown,
+            };
     }
 }
