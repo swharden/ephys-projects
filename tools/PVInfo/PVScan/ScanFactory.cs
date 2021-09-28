@@ -8,7 +8,11 @@ namespace PVInfo.PVScan
     {
         public static IScan FromPVFolder(string pvFolderPath)
         {
-            string xmlFilePath = Directory.GetFiles(pvFolderPath, "*.xml").First();
+            string[] xmlFilePaths = Directory.GetFiles(pvFolderPath, "*.xml");
+            if (xmlFilePaths.Length == 0)
+                return null;
+
+            string xmlFilePath = xmlFilePaths.First();
             string xml = File.ReadAllText(xmlFilePath);
 
             if (xml.Contains("type=\"TSeries ZSeries Element\""))
