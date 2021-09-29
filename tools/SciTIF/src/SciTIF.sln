@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31521.260
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SciTIF", "src\SciTIF\SciTIF.csproj", "{6153C040-0D8C-46BB-A985-3B4CE8E12C83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SciTIF", "SciTIF\SciTIF.csproj", "{6153C040-0D8C-46BB-A985-3B4CE8E12C83}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SciTIF.Tests", "src\SciTIF.Tests\SciTIF.Tests.csproj", "{219C0062-1E8A-4146-8431-170E5AE9EC4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SciTIF.Tests", "SciTIF.Tests\SciTIF.Tests.csproj", "{219C0062-1E8A-4146-8431-170E5AE9EC4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
