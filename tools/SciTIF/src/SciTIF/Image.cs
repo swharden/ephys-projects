@@ -39,6 +39,11 @@ namespace SciTIF
             }
         }
 
+        public Image(double[,] values)
+        {
+            Values = values;
+        }
+
         public override string ToString()
         {
             return $"Image {Width}x{Height}";
