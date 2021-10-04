@@ -4,5 +4,6 @@ namespace PVInfo.PVScan
     {
         ZSeries,
         TZSeries,
+        SingleImage,
     }
 }

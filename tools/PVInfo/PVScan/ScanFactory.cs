@@ -21,7 +21,10 @@ namespace PVInfo.PVScan
             if (xml.Contains("type=\"ZSeries\""))
                 return new ZSeries(xmlFilePath);
 
-            throw new NotImplementedException("unsupported XML scan type");
+            if (xml.Contains("type=\"Single\""))
+                return new SingleImage(xmlFilePath);
+
+            throw new NotImplementedException($"unsupported XML scan type: {xmlFilePath}");
         }
     }
 }
