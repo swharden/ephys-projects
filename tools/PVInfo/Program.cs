@@ -10,7 +10,7 @@ namespace PVInfo
     {
         static void Main(string[] args)
         {
-            MakeIndex(@"X:\Data\C57\GRABNE\2021-09-23-ne-washon");
+            MakeIndex(@"X:\Data\C57\GRABNE\2021-10-04-ne-washon");
         }
 
         static void MakeIndex(string folderPath)
@@ -39,7 +39,7 @@ namespace PVInfo
             string template = File.ReadAllText("template.html");
             string html = template.Replace("{{CONTENT}}", sb.ToString());
 
-            string reportFilePath = Path.Combine(folderPath, "report.html");
+            string reportFilePath = Path.Combine(folderPath, "index.html");
             File.WriteAllText(reportFilePath, html);
             Console.WriteLine(reportFilePath);
         }
