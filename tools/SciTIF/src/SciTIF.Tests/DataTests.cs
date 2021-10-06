@@ -22,7 +22,7 @@ namespace SciTIF.Tests
             SciTIF.Image image = new(filePath);
             Assert.AreEqual(width, image.Width);
             Assert.AreEqual(height, image.Height);
-            Assert.AreEqual(bitsPerPixel, image.BitsPerPixel);
+            Assert.AreEqual(bitsPerPixel, image.BitsPerSample);
 
             for (int i = 0; i < values.Length; i++)
             {

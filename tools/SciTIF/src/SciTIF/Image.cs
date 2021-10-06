@@ -15,7 +15,9 @@ namespace SciTIF
         public int Width => Values.GetLength(1);
         public int Height => Values.GetLength(0);
         public readonly double[,] Values;
-        public readonly int BitsPerPixel;
+        public readonly int SamplesPerPixel;
+        public readonly int BitsPerSample;
+        public readonly string ColorFormat;
 
         public Image(string tifFilePath)
         {
@@ -25,17 +27,34 @@ namespace SciTIF
 
             Tiff.SetErrorHandler(new SilentHandler());
             using Tiff tif = Tiff.Open(tifFilePath, "r");
-            BitsPerPixel = tif.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt();
-            switch (BitsPerPixel)
+
+            BitsPerSample = tif.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt();
+            ColorFormat = tif.GetField(TiffTag.PHOTOMETRIC)[0].ToString();
+
+            if (tif.GetField(TiffTag.SAMPLESPERPIXEL) is null)
+                SamplesPerPixel = 1;
+            else
+                SamplesPerPixel = tif.GetField(TiffTag.SAMPLESPERPIXEL)[0].ToInt();
+
+            if (ColorFormat == "RGB")
             {
-                case 32:
-                    Values = ReadPixels_Float32(tif);
-                    break;
-                case 16:
-                    Values = ReadPixels_Int16(tif);
-                    break;
-                default:
-                    throw new NotImplementedException($"unsupported TIF depth: {BitsPerPixel}-bit");
+                if (SamplesPerPixel != 4)
+                    throw new InvalidOperationException($"unsupported samples per pixel: {SamplesPerPixel}");
+                Values = ReadPixels_ARGB_AVG(tif);
+            }
+            else if (ColorFormat == "MINISBLACK")
+            {
+                Values = BitsPerSample switch
+                {
+                    32 => ReadPixels_Float32(tif),
+                    16 => ReadPixels_Int16(tif),
+                    8 => ReadPixels_Int8(tif),
+                    _ => throw new NotImplementedException($"unsupported TIF depth: {BitsPerSample}-bit"),
+                };
+            }
+            else
+            {
+                throw new InvalidOperationException($"unsupported color format: {ColorFormat}");
             }
         }
 
@@ -75,6 +94,30 @@ namespace SciTIF
             for (int y = 0; y < Height; y++)
                 for (int x = 0; x < Width; x++)
                     Values[y, x] = (Values[y, x] - min) * scale;
+        }
+
+        private static double[,] ReadPixels_ARGB_AVG(Tiff image)
+        {
+            int width = image.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
+            int height = image.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
+            double[,] pixelValues = new double[height, width];
+
+            int[] raster = new int[height * width];
+            image.ReadRGBAImage(width, height, raster, true);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int offset = y * width + x;
+                    int r = Tiff.GetR(raster[offset]);
+                    int g = Tiff.GetG(raster[offset]);
+                    int b = Tiff.GetB(raster[offset]);
+                    pixelValues[y, x] = (r + g + b) / 3;
+                }
+            }
+
+            return pixelValues;
         }
 
         private static double[,] ReadPixels_Float32(Tiff image)
@@ -132,10 +175,43 @@ namespace SciTIF
             return pixelValues;
         }
 
+        private static double[,] ReadPixels_Int8(Tiff image)
+        {
+            int width = image.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
+            int height = image.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
+            double[,] pixelValues = new double[height, width];
+
+            int numberOfStrips = image.NumberOfStrips();
+            int stripSize = image.StripSize();
+
+            byte[] bytes = new byte[numberOfStrips * stripSize];
+            for (int i = 0; i < numberOfStrips; ++i)
+            {
+                image.ReadRawStrip(i, bytes, i * stripSize, stripSize);
+            }
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int offset = (y * width + x);
+                    pixelValues[y, x] = bytes[offset];
+                }
+            }
+
+            return pixelValues;
+        }
+
         public void SaveBmp(string path)
         {
             using Bitmap bmp = GetBitmap(Values);
             bmp.Save(path);
+        }
+
+        public void SavePng(string path)
+        {
+            using Bitmap bmp = GetBitmap(Values);
+            bmp.Save(path, System.Drawing.Imaging.ImageFormat.Png);
         }
 
         private static byte Clamp(double x, byte min = 0, byte max = 255)
