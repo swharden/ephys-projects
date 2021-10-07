@@ -11,33 +11,10 @@ namespace MoviePlot
         {
             // read ROI values from ImageJ output file
             string csvFile = @"X:\Data\C57\GRABNE\2021-10-04-ne-washon\TSeries-10042021-1257-1853\Analysis\Results.csv";
+            double[] afu = ReadSingleRoiValues(csvFile);
             double samplePeriod = 75.4936441; // seconds
-            double[] roiValues = ReadSingleRoiValues(csvFile);
-            double[] roiTimes = Enumerable.Range(0, roiValues.Length)
-                .Select(x => x * samplePeriod / 60)
-                .ToArray();
-            double[] dff = CalculateDFF(roiValues, roiTimes, 5, 8);
-
-            // scottplot
-            var plt = new ScottPlot.Plot();
-
-            var hline = plt.AddHorizontalLine(0);
-            hline.Color = Color.Black;
-            hline.LineStyle = ScottPlot.LineStyle.Dash;
-
-            var thinLine = plt.AddScatter(roiTimes, roiValues);
-            thinLine.Color = Color.Blue;
-
-            var highlightLine = plt.AddScatter(roiTimes, roiValues);
-            highlightLine.LineWidth = 10;
-            highlightLine.MarkerSize = 0;
-            highlightLine.Color = Color.FromArgb(100, Color.Green);
-
-            plt.AddHorizontalSpan(10, 15, Color.FromArgb(20, Color.Black));
-            plt.AddHorizontalSpan(26, 31, Color.FromArgb(20, Color.Black));
-
-            plt.YLabel("ΔF/F (%)");
-            plt.XLabel("Time (minutes)");
+            double[] times = Enumerable.Range(0, afu.Length).Select(x => x * samplePeriod / 60).ToArray();
+            double[] dff = CalculateDFF(afu, times, baselineTime1: 5, baselineTime2: 8);
 
             // load images
             string inputFolder = @"X:\Data\C57\GRABNE\2021-10-04-ne-washon\TSeries-10042021-1257-1853\Analysis\small-source-frames";
@@ -52,19 +29,43 @@ namespace MoviePlot
                 using Graphics gfx = Graphics.FromImage(frame);
                 gfx.Clear(Color.White);
 
-                RectangleF micrographRect = new(10, 10, 460, 460);
+                Rectangle micrographRect = new(10, 10, 460, 460);
                 gfx.DrawImage(micrograph, micrographRect);
-                
-                RectangleF graphRect = new(470, 0, 390, 480);
-                plt.Resize(graphRect.Width, graphRect.Height);
-                highlightLine.MaxRenderIndex = i;
-                using Bitmap graph = plt.GetBitmap();
+
+                Rectangle graphRect = new(470, 0, 390, 480);
+                Bitmap graph = GetPlotFrame(graphRect.Width, graphRect.Height, times, dff, i);
                 gfx.DrawImage(graph, graphRect);
 
                 string outputImage = Path.Combine(outputFolder, Path.GetFileName(inputImage));
                 frame.Save(outputImage, System.Drawing.Imaging.ImageFormat.Png);
                 Console.WriteLine(outputImage);
             }
+        }
+
+        static Bitmap GetPlotFrame(int width, int height, double[] times, double[] dff, int frame)
+        {
+            var plt = new ScottPlot.Plot(width, height);
+
+            var hline = plt.AddHorizontalLine(0);
+            hline.Color = Color.Black;
+            hline.LineStyle = ScottPlot.LineStyle.Dash;
+
+            var thinLine = plt.AddScatter(times, dff);
+            thinLine.Color = Color.Blue;
+
+            var highlightLine = plt.AddScatter(times, dff);
+            highlightLine.LineWidth = 10;
+            highlightLine.MarkerSize = 0;
+            highlightLine.Color = Color.FromArgb(100, Color.Green);
+            highlightLine.MaxRenderIndex = frame;
+
+            plt.AddHorizontalSpan(10, 15, Color.FromArgb(20, Color.Black));
+            plt.AddHorizontalSpan(26, 31, Color.FromArgb(20, Color.Black));
+
+            plt.YLabel("ΔF/F (%)");
+            plt.XLabel("Time (minutes)");
+
+            return plt.GetBitmap();
         }
 
         static double[] ReadSingleRoiValues(string filePath) => File.ReadLines(filePath)
