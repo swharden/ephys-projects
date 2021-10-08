@@ -9,4 +9,9 @@
     <ProjectReference Include="..\SciTIF\src\SciTIF\SciTIF.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AbfSharp" Version="0.4.0" />
+    <PackageReference Include="scottplot" Version="4.1.25" />
+  </ItemGroup>
+
 </Project>
