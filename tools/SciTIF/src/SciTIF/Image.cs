@@ -18,6 +18,7 @@ namespace SciTIF
         public readonly int SamplesPerPixel;
         public readonly int BitsPerSample;
         public readonly string ColorFormat;
+        public readonly string SampleFormat;
 
         public Image(string tifFilePath)
         {
@@ -28,13 +29,15 @@ namespace SciTIF
             Tiff.SetErrorHandler(new SilentHandler());
             using Tiff tif = Tiff.Open(tifFilePath, "r");
 
+            SamplesPerPixel = tif.GetField(TiffTag.SAMPLESPERPIXEL)[0].ToInt();
             BitsPerSample = tif.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt();
+            SampleFormat = tif.GetFieldDefaulted(TiffTag.SAMPLEFORMAT)[0].ToString();
             ColorFormat = tif.GetField(TiffTag.PHOTOMETRIC)[0].ToString();
-
-            if (tif.GetField(TiffTag.SAMPLESPERPIXEL) is null)
-                SamplesPerPixel = 1;
-            else
-                SamplesPerPixel = tif.GetField(TiffTag.SAMPLESPERPIXEL)[0].ToInt();
+            
+            Console.WriteLine($"SamplesPerPixel: {SamplesPerPixel}");
+            Console.WriteLine($"BitsPerSample: {BitsPerSample}");
+            Console.WriteLine($"ColorFormat: {ColorFormat}");
+            Console.WriteLine($"SampleFormat: {SampleFormat}");
 
             if (ColorFormat == "RGB")
             {
@@ -128,15 +131,14 @@ namespace SciTIF
             int height = image.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
             double[,] pixelValues = new double[height, width];
 
-            byte[] stripBytes = new byte[image.StripSize()];
+            byte[] lineBytes = new byte[image.ScanlineSize()];
             byte[] pixelBytes = new byte[bytesPerPixel];
-            for (int y = 0; y < pixelValues.GetLength(0); y++)
+            for (int y = 0; y < height; y++)
             {
-                image.ReadRawStrip(y, stripBytes, 0, stripBytes.Length);
-                for (int x = 0; x < pixelValues.GetLength(1); x++)
+                image.ReadScanline(lineBytes, y);
+                for (int x = 0; x < width; x++)
                 {
-                    Array.Copy(stripBytes, x * bytesPerPixel, pixelBytes, 0, bytesPerPixel);
-                    Array.Reverse(pixelBytes);
+                    Array.Copy(lineBytes, x * bytesPerPixel, pixelBytes, 0, bytesPerPixel);
                     pixelValues[y, x] = BitConverter.ToSingle(pixelBytes, 0);
                 }
             }
