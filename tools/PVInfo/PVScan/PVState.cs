@@ -97,7 +97,8 @@ namespace PVInfo.PVScan
         private static string GetVersion(XDocument xmlDoc)
         {
             string version = xmlDoc.Element("PVScan").Attribute("version").Value;
-            if (version != "5.5.64.500")
+            string[] supportedVersions = { "5.4.64.500", "5.5.64.500" };
+            if (!supportedVersions.Contains(version))
                 throw new NotImplementedException($"unsupported PV version: {version}");
             return version;
         }
