@@ -15,6 +15,9 @@ namespace PVInfo.PVScan
             string xmlFilePath = xmlFilePaths.First();
             string xml = File.ReadAllText(xmlFilePath);
 
+            if (xml.Contains("type=\"TSeries Timed Element\""))
+                return new TSeries(xmlFilePath);
+
             if (xml.Contains("type=\"TSeries ZSeries Element\""))
                 return new TZSeries(xmlFilePath);
 
