@@ -13,7 +13,7 @@ namespace PVInfo.PVScan
         public ScanType ScanType => ScanType.ZSeries;
         public readonly double[] FrameTimes;
         public int FrameCount => FrameTimes.Length;
-        public double FrameAcquisitionTime => Math.Round(FrameTimes[1] - FrameTimes[0], 5);
+        public double FrameAcquisitionTime => FrameTimes.Length > 1 ? Math.Round(FrameTimes[1] - FrameTimes[0], 5) : double.NaN;
         public double TotalAcquisitionTime => Math.Round(FrameAcquisitionTime * FrameCount, 5);
 
         public ZSeries(string path)
