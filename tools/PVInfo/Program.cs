@@ -10,12 +10,88 @@ namespace PVInfo
     {
         static void Main(string[] args)
         {
-            MakeIndex(@"X:\Data\C57\GRABNE\2021-10-04-ne-washon");
+            /*
+            string folderOfScans = @"X:\Data\C57\GRABNE\2021-10-04-ne-washon";
+            
+            if (args.Length == 1) {
+                folderOfScans = args[0];
+            }
+
+            MakeIndex(folderOfScans);
+            */
+
+            // ffmpeg.exe -y -i video.avi -c:v libx264 -pix_fmt yuv420p video.mp4
+
+            string[] folders = {
+                "X:/Data/OT-Cre/OT-GCaMP-nonspecific/04-03-19 evoke OT/19421000",
+                "X:/Data/OT-Cre/OT-GCaMP-nonspecific/04-03-19 evoke OT/19528000",
+                "X:/Data/OT-Cre/OT-GCaMP-nonspecific/04-03-19 evoke OT/04-30-2020 K-GLU analyze/19528021",
+                "X:/Data/OT-Cre/OT-GCaMP-nonspecific/04-03-19 evoke OT/19610000",
+                "X:/Data/OT-Cre/OT-GCaMP-nonspecific/04-03-19 evoke OT/04-30-2020 K-GLU analyze/19610009",
+                "X:/Data/OT-Cre/OT-GCaMP-nonspecific/04-03-19 evoke OT/19523000",
+                "X:/Data/OT-Cre/OT-GCaMP-nonspecific/04-03-19 evoke OT/04-30-2020 K-GLU analyze/19523009",
+                "X:/Data/OT-Cre/OT-GCaMP-nonspecific/04-03-19 evoke OT/19523019",
+                "X:/Data/OT-Cre/OT-GCaMP-nonspecific/04-03-19 evoke OT/04-30-2020 K-GLU analyze/19d09000",
+                "X:/Data/OT-Cre/OT-GCaMP-nonspecific/04-03-19 evoke OT/04-30-2020 K-GLU analyze/20207000",
+                "X:/Data/OT-Cre/OT-GCaMP-nonspecific/04-03-19 evoke OT/04-30-2020 K-GLU analyze/20207019",
+                "X:/Data/OT-Cre/OT-GCaMP-nonspecific/04-03-19 evoke OT/04-30-2020 K-GLU analyze/20214011",
+                "X:/Data/OT-Cre/OT-GCaMP-nonspecific/04-03-19 evoke OT/04-30-2020 K-GLU analyze/20214022",
+            };
+
+            foreach (string folder in folders)
+            {
+                MakeIndex(folder);
+            }
+        }
+
+        static string GetImageHtml(string folderPath)
+        {
+            StringBuilder sb = new();
+
+            string[] extensions = { ".png", ".gif", ".jpg", ".jpeg" };
+            string[] filenames = Directory.GetFiles(folderPath)
+                .Select(x => Path.GetFileName(x))
+                .Where(x => extensions.Contains(Path.GetExtension(x)))
+                .ToArray();
+
+            foreach (var filename in filenames)
+                sb.AppendLine($"<a href='{filename}'><img src='{filename}' height='300' class='shadow border m-3' /></a>");
+
+            return sb.ToString();
+        }
+
+        static string GetVideoHtml(string folderPath)
+        {
+            StringBuilder sb = new();
+
+            string[] extensions = { /*".avi",*/ ".mp4" };
+            string[] filenames = Directory.GetFiles(folderPath)
+                .Select(x => Path.GetFileName(x))
+                .Where(x => extensions.Contains(Path.GetExtension(x)))
+                .ToArray();
+
+            foreach (var filename in filenames)
+                sb.AppendLine($"<video class='m-3' height='300' controls><source src='{filename}' type='video/mp4'></video>");
+
+            return sb.ToString();
         }
 
         static void MakeIndex(string folderPath)
         {
             StringBuilder sb = new();
+
+            sb.AppendLine($"<h3><code>{folderPath}</code></h3>");
+
+            string[] imageExtensions = { ".png", ".gif", ".jpg", ".jpeg" };
+            string[] imageFilenames = Directory.GetFiles(folderPath)
+                .Select(x => Path.GetFileName(x))
+                .Where(x => imageExtensions.Contains(Path.GetExtension(x)))
+                .ToArray();
+
+            sb.AppendLine("<div class='bg-light my-3 d-flex'>");
+            sb.AppendLine(GetImageHtml(folderPath));
+            sb.AppendLine(GetVideoHtml(folderPath));
+            sb.AppendLine("</div>");
 
             foreach (var pvFolderPath in Directory.GetDirectories(folderPath))
             {
