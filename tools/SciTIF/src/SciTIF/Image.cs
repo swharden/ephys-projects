@@ -33,7 +33,7 @@ namespace SciTIF
             BitsPerSample = tif.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt();
             SampleFormat = tif.GetFieldDefaulted(TiffTag.SAMPLEFORMAT)[0].ToString();
             ColorFormat = tif.GetField(TiffTag.PHOTOMETRIC)[0].ToString();
-            
+
             Console.WriteLine($"SamplesPerPixel: {SamplesPerPixel}");
             Console.WriteLine($"BitsPerSample: {BitsPerSample}");
             Console.WriteLine($"ColorFormat: {ColorFormat}");
@@ -88,12 +88,44 @@ namespace SciTIF
             return (min, max);
         }
 
-        public void AutoScale(double newMax = 255)
+        public (double min, double max) GetPercentiles(double minPercentile, double maxPercentile)
         {
-            (double min, double max) = GetMinMax();
+            int i = 0;
+            double[] values = new double[Width * Height];
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    values[i++] = Values[y, x];
+                }
+            }
+            Array.Sort(values);
+
+            double minFrac = minPercentile / 100;
+            double maxFrac = maxPercentile / 100;
+            int minIndex = (int)(values.Length * minFrac);
+            int maxIndex = (int)(values.Length * maxFrac);
+
+            return (values[minIndex], values[maxIndex]);
+        }
+
+        public void AutoScale(double percentileLow = 0, double percentileHigh = 100)
+        {
+            double newMax = 255;
+            double min;
+            double max;
+
+            if (percentileLow == 0 && percentileHigh == 100)
+            {
+                (min, max) = GetMinMax();
+            }
+            else
+            {
+                (min, max) = GetPercentiles(percentileLow, percentileHigh);
+            }
 
             double scale = newMax / (max - min);
-
+            
             for (int y = 0; y < Height; y++)
                 for (int x = 0; x < Width; x++)
                     Values[y, x] = (Values[y, x] - min) * scale;

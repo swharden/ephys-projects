@@ -14,7 +14,7 @@ namespace SciTIF
             Console.WriteLine($"Converting {Path.GetFileName(tifFilePath)}...");
             var img = new Image(tifFilePath);
             if (autoScale)
-                img.AutoScale();
+                img.AutoScale(.05, 99.95);
             img.SavePng(pngFilePath);
         }
 
