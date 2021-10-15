@@ -29,7 +29,10 @@ namespace SciTIF
             Tiff.SetErrorHandler(new SilentHandler());
             using Tiff tif = Tiff.Open(tifFilePath, "r");
 
-            SamplesPerPixel = tif.GetField(TiffTag.SAMPLESPERPIXEL)[0].ToInt();
+            SamplesPerPixel = 1;
+            if (tif.GetField(TiffTag.SAMPLESPERPIXEL) != null)
+                SamplesPerPixel = tif.GetField(TiffTag.SAMPLESPERPIXEL)[0].ToInt();
+
             BitsPerSample = tif.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt();
             SampleFormat = tif.GetFieldDefaulted(TiffTag.SAMPLEFORMAT)[0].ToString();
             ColorFormat = tif.GetField(TiffTag.PHOTOMETRIC)[0].ToString();
@@ -41,9 +44,12 @@ namespace SciTIF
 
             if (ColorFormat == "RGB")
             {
-                if (SamplesPerPixel != 4)
-                    throw new InvalidOperationException($"unsupported samples per pixel: {SamplesPerPixel}");
-                Values = ReadPixels_ARGB_AVG(tif);
+                Values = SamplesPerPixel switch
+                {
+                    4 => ReadPixels_ARGB_AVG(tif),
+                    3 => ReadPixels_RGB_AVG(tif),
+                    _ => throw new InvalidOperationException($"unsupported samples per pixel: {SamplesPerPixel}")
+                };
             }
             else if (ColorFormat == "MINISBLACK")
             {
@@ -125,13 +131,38 @@ namespace SciTIF
             }
 
             double scale = newMax / (max - min);
-            
+
             for (int y = 0; y < Height; y++)
                 for (int x = 0; x < Width; x++)
                     Values[y, x] = (Values[y, x] - min) * scale;
         }
 
         private static double[,] ReadPixels_ARGB_AVG(Tiff image)
+        {
+            int width = image.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
+            int height = image.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
+            double[,] pixelValues = new double[height, width];
+
+            int[] raster = new int[height * width];
+            image.ReadRGBAImage(width, height, raster, true);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int offset = y * width + x;
+                    int a = Tiff.GetA(raster[offset]);
+                    int r = Tiff.GetR(raster[offset]);
+                    int g = Tiff.GetG(raster[offset]);
+                    int b = Tiff.GetB(raster[offset]);
+                    pixelValues[y, x] = (r + g + b) / 3;
+                }
+            }
+
+            return pixelValues;
+        }
+
+        private static double[,] ReadPixels_RGB_AVG(Tiff image)
         {
             int width = image.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
             int height = image.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
