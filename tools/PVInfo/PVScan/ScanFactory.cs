@@ -27,6 +27,9 @@ namespace PVInfo.PVScan
             if (xml.Contains("type=\"Single\""))
                 return new SingleImage(xmlFilePath);
 
+            if (xml.Contains("type=\"Linescan\""))
+                return new LineScan(xmlFilePath);
+
             throw new NotImplementedException($"unsupported XML scan type: {xmlFilePath}");
         }
     }
