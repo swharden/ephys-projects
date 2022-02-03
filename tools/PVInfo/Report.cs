@@ -22,7 +22,7 @@ namespace PVInfo
             string[] imageExtensions = { ".png", ".gif", ".jpg", ".jpeg" };
             string[] imageFilenames = Directory.GetFiles(folderPath)
                 .Select(x => Path.GetFileName(x))
-                .Where(x => imageExtensions.Contains(Path.GetExtension(x)))
+                .Where(x => imageExtensions.Contains(Path.GetExtension(x).ToLowerInvariant()))
                 .ToArray();
 
             sb.AppendLine("<div class='bg-light my-3 d-flex'>");
@@ -83,7 +83,7 @@ namespace PVInfo
             {
                 foreach (string filePath in Directory.GetFiles(subFolderPath, "*.*"))
                 {
-                    string ext = Path.GetExtension(filePath);
+                    string ext = Path.GetExtension(filePath).ToLowerInvariant();
                     if (ext == ".tif")
                         tifFiles.Add(filePath);
                     else if (ext == ".txt")
@@ -140,7 +140,7 @@ namespace PVInfo
                 string imageFolderName = Path.GetFileName(Path.GetDirectoryName(imageFile));
                 string imageFileName = Path.GetFileName(imageFile);
                 string imageUrl = $"{Path.GetFileName(pvFolderPath)}/{imageFolderName}/{imageFileName}";
-                sb.AppendLine($"<a href='{imageUrl}'><img src='{imageUrl}'></a>");
+                sb.AppendLine($"<a href='{imageUrl}'><img src='{imageUrl}' style='max-width: 100%'></a>");
             }
         }
 
@@ -172,7 +172,7 @@ namespace PVInfo
             string[] extensions = { ".png", ".gif", ".jpg", ".jpeg" };
             string[] filenames = Directory.GetFiles(folderPath)
                 .Select(x => Path.GetFileName(x))
-                .Where(x => extensions.Contains(Path.GetExtension(x)))
+                .Where(x => extensions.Contains(Path.GetExtension(x).ToLowerInvariant()))
                 .ToArray();
 
             foreach (var filename in filenames)
@@ -188,7 +188,7 @@ namespace PVInfo
             string[] extensions = { /*".avi",*/ ".mp4" };
             string[] filenames = Directory.GetFiles(folderPath)
                 .Select(x => Path.GetFileName(x))
-                .Where(x => extensions.Contains(Path.GetExtension(x)))
+                .Where(x => extensions.Contains(Path.GetExtension(x).ToLowerInvariant()))
                 .ToArray();
 
             foreach (var filename in filenames)
