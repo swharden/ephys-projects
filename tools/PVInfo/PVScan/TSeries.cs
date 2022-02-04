@@ -27,7 +27,7 @@ namespace PVInfo.PVScan
         {
             StringBuilder sb = new(PVState.GetSummary());
             sb.AppendLine($"TSeries Image count: {FrameCount}");
-            sb.AppendLine($"TSeries Image time: {FrameAcquisitionTime}");
+            sb.AppendLine($"TSeries Image time: {FrameAcquisitionTime} sec ({1.0 / FrameAcquisitionTime:N2} FPS)");
             sb.AppendLine($"TSeries Total time: {TotalAcquisitionTime} ({Math.Round(TotalAcquisitionTime / 60, 3)} min)");
             return sb.ToString();
         }
