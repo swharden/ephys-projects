@@ -146,6 +146,17 @@ namespace SciTIF
                     Values[y, x] = (Values[y, x] - min) * scale;
         }
 
+        public double GetMean()
+        {
+            double sum = 0;
+
+            for (int y = 0; y < Height; y++)
+                for (int x = 0; x < Width; x++)
+                    sum += Values[y, x];
+
+            return sum / (Width * Height);
+        }
+
         private static double[,] ReadPixels_ARGB_AVG(Tiff image)
         {
             int width = image.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();

@@ -78,6 +78,7 @@ namespace PVInfo
             List<string> imageFiles = new();
             List<string> notesFiles = new();
             List<string> videoFiles = new();
+            List<string> originFiles = new();
 
             foreach (string subFolderPath in Directory.GetDirectories(pvFolderPath))
             {
@@ -92,13 +93,16 @@ namespace PVInfo
                         videoFiles.Add(filePath);
                     else if (ext == ".jpg" || ext == ".gif" || ext == ".png")
                         imageFiles.Add(filePath);
+                    else if (ext == ".dat")
+                        originFiles.Add(filePath);
                 }
             }
 
             ListNotesFiles(sb, notesFiles, pvFolderPath);
-            ListTifFiles(sb, tifFiles, pvFolderPath);
-            ListImages(sb, imageFiles, pvFolderPath);
             ListVideos(sb, videoFiles, pvFolderPath);
+            ListImages(sb, imageFiles, pvFolderPath);
+            ListOriginFiles(sb, originFiles, pvFolderPath);
+            ListTifFiles(sb, tifFiles, pvFolderPath);
         }
 
         static void ListNotesFiles(StringBuilder sb, List<string> notesFiles, string pvFolderPath)
@@ -118,10 +122,22 @@ namespace PVInfo
             if (tifFiles.Count == 0)
                 return;
 
-            AddHeading(sb, $"Original TIFs ({tifFiles.Count}):");
+            AddHeading(sb, $"Reference TIFs ({tifFiles.Count}):");
             CodeStart(sb);
             foreach (string tif in tifFiles)
                 sb.AppendLine(tif);
+            CodeEnd(sb);
+        }
+
+        static void ListOriginFiles(StringBuilder sb, List<string> originFiles, string pvFolderPath)
+        {
+            if (originFiles.Count == 0)
+                return;
+
+            AddHeading(sb, $"Origin Files ({originFiles.Count}):");
+            CodeStart(sb);
+            foreach (string path in originFiles)
+                sb.AppendLine(path);
             CodeEnd(sb);
         }
 

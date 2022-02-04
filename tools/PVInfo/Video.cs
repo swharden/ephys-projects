@@ -22,10 +22,6 @@ namespace PVInfo
                 if (scan is PVScan.TSeries)
                 {
                     PVScan.TSeries scan2 = (PVScan.TSeries)scan;
-
-                    Console.WriteLine();
-                    Console.WriteLine("Generating MP4 video from T-Series:");
-                    Console.WriteLine(scan.PVState.FolderPath);
                     CreateLinescanMP4(scan.PVState.FolderPath, 1, scan2.FrameTimes, overwrite);
                     CreateLinescanMP4(scan.PVState.FolderPath, 2, scan2.FrameTimes, overwrite);
                 }
