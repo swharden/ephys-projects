@@ -1,6 +1,7 @@
 using System;
 using BitMiracle.LibTiff.Classic;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace SciTIF
 {
@@ -37,11 +38,6 @@ namespace SciTIF
             SampleFormat = tif.GetFieldDefaulted(TiffTag.SAMPLEFORMAT)[0].ToString();
             ColorFormat = tif.GetField(TiffTag.PHOTOMETRIC)[0].ToString();
 
-            Console.WriteLine($"SamplesPerPixel: {SamplesPerPixel}");
-            Console.WriteLine($"BitsPerSample: {BitsPerSample}");
-            Console.WriteLine($"ColorFormat: {ColorFormat}");
-            Console.WriteLine($"SampleFormat: {SampleFormat}");
-
             if (ColorFormat == "RGB")
             {
                 Values = SamplesPerPixel switch
@@ -74,7 +70,13 @@ namespace SciTIF
 
         public override string ToString()
         {
-            return $"Image {Width}x{Height}";
+            System.Text.StringBuilder sb = new();
+            sb.AppendLine($"Size: {Width}x{Height}");
+            sb.AppendLine($"SamplesPerPixel: {SamplesPerPixel}");
+            sb.AppendLine($"BitsPerSample: {BitsPerSample}");
+            sb.AppendLine($"ColorFormat: {ColorFormat}");
+            sb.AppendLine($"SampleFormat: {SampleFormat}");
+            return sb.ToString();
         }
 
         public (double min, double max) GetMinMax()
@@ -113,6 +115,13 @@ namespace SciTIF
             int maxIndex = (int)(values.Length * maxFrac);
 
             return (values[minIndex], values[maxIndex]);
+        }
+
+        public void Divide(double factor)
+        {
+            for (int y = 0; y < Height; y++)
+                for (int x = 0; x < Width; x++)
+                    Values[y, x] = Values[y, x] / factor;
         }
 
         public void AutoScale(double percentileLow = 0, double percentileHigh = 100)
@@ -287,6 +296,17 @@ namespace SciTIF
                 return max;
             else
                 return (byte)x;
+        }
+
+        public Bitmap GetBitmapIndexed() => GetBitmap(Values);
+
+        public Bitmap GetBitmapRGB()
+        {
+            Bitmap bmpIndexed = GetBitmapIndexed();
+            Bitmap bmp = new(bmpIndexed.Width, bmpIndexed.Height, PixelFormat.Format32bppRgb);
+            Graphics gfx = Graphics.FromImage(bmp);
+            gfx.DrawImage(bmpIndexed, 0, 0);
+            return bmp;
         }
 
         public static Bitmap GetBitmap(double[,] values)
