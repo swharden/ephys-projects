@@ -320,6 +320,8 @@ namespace SciTIF
             return bmp;
         }
 
+        public static Image FromTif(string tifFilePath) => new Image(tifFilePath);
+
         public static Bitmap GetBitmap(double[,] values)
         {
             // create and fill a pixel array for the 8-bit final image

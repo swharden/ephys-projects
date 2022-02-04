@@ -156,7 +156,7 @@ namespace PVInfo
                 string imageFolderName = Path.GetFileName(Path.GetDirectoryName(imageFile));
                 string imageFileName = Path.GetFileName(imageFile);
                 string imageUrl = $"{Path.GetFileName(pvFolderPath)}/{imageFolderName}/{imageFileName}";
-                sb.AppendLine($"<a href='{imageUrl}'><img src='{imageUrl}' style='max-width: 100%'></a>");
+                sb.AppendLine($"<a href='{imageUrl}'><img src='{imageUrl}' class='m-2' style='max-width: 300px'></a>");
             }
         }
 
