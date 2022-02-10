@@ -11,12 +11,15 @@ namespace PVInfo
     {
         public static void CreateMultiFolderIndex(string folderPath)
         {
+            StringBuilder sbTOC = new();
+
             StringBuilder sb = new();
 
             sb.AppendLine("<div class='alert alert-primary mt-5 shadow border'>");
             sb.AppendLine($"<h1>Multi-Folder 2P Report</h1>");
             sb.AppendLine($"<div>{folderPath}</div>");
             sb.AppendLine($"<div>Generated {DateTime.Now}</div>");
+            sb.AppendLine($"<!--TOC-->");
             sb.AppendLine("</div>");
 
             string[] imageExtensions = { ".png", ".gif", ".jpg", ".jpeg" };
@@ -30,14 +33,18 @@ namespace PVInfo
             sb.AppendLine(GetVideoHtml(folderPath));
             sb.AppendLine("</div>");
 
-            foreach (var pvFolderPath in Directory.GetDirectories(folderPath))
+            foreach (var pvFolderPath in Directory.GetDirectories(folderPath).OrderBy(x => x))
             {
+                string pvFolderName = Path.GetFileName(pvFolderPath);
+                string pvFolderNameSafe = WebSafe(pvFolderName);
                 PVScan.IScan scan = PVScan.ScanFactory.FromPVFolder(pvFolderPath);
                 if (scan is not null)
                 {
                     Console.WriteLine($"Analyzing: {pvFolderPath}");
                     sb.AppendLine("<div class='my-5 p-3 bg-light shadow border rounded bg-white'>");
-                    sb.AppendLine($"<h1>{scan.ScanType}: {Path.GetFileName(pvFolderPath)}</h1>");
+                    string title = $"{scan.ScanType}: {pvFolderName}";
+                    sb.AppendLine(GetAnchoredHeader(title));
+                    sbTOC.AppendLine($"<li><a href='#{WebSafe(title)}'>{title}</a> ({scan.PVState.DateTime})</li>");
                     Code(sb, scan.GetSummary());
                     ShowImages(pvFolderPath, sb);
                     sb.AppendLine("</div>");
@@ -49,10 +56,17 @@ namespace PVInfo
             }
 
             string html = Template.HTML.Replace("{{CONTENT}}", sb.ToString());
+            html = html.Replace("<!--TOC-->", $"<ul>{sbTOC}</ul>");
 
             string reportFilePath = Path.Combine(folderPath, "index.html");
             File.WriteAllText(reportFilePath, html);
             Console.WriteLine(reportFilePath);
+        }
+
+        static string GetAnchoredHeader(string text)
+        {
+            string safe = WebSafe(text);
+            return $"<h1 id='{safe}'><a href='#{safe}' style='color: black;'>{text}</a></h1>";
         }
 
 
@@ -213,5 +227,22 @@ namespace PVInfo
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Return the input string modified to contain only numbers, lowercase letters, hyphens, and underscores.
+        /// </summary>
+        private static string WebSafe(string text)
+        {
+            char[] chars = text.ToLowerInvariant()
+                .ToCharArray()
+                .Select(c => (char.IsLetterOrDigit(c) || c == '_') ? c : '-')
+                .ToArray();
+
+            string safe = new(chars);
+
+            while (safe.Contains("--"))
+                safe = safe.Replace("--", "-");
+
+            return safe.Trim('-');
+        }
     }
 }

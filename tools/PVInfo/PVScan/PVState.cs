@@ -18,6 +18,7 @@ namespace PVInfo.PVScan
         public readonly string XmlFilePath;
         public readonly string PrairieViewVersion;
         public readonly DateTime Started;
+        public DateTime DateTime => Started;
         public readonly ScanMode ScanMode;
         public readonly int BitDepth;
         public readonly double DwellTime;
