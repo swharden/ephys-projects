@@ -38,6 +38,8 @@ namespace PVInfo
                 return;
 
             string[] filePaths = Directory.GetFiles(linescanFolder, $"*Ch{channel}*.tif");
+            if (filePaths.Length == 0)
+                return;
 
             SciTIF.Image firstImage = new(filePaths[0]);
 

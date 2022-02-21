@@ -51,7 +51,7 @@ namespace PVInfo
                 }
                 else
                 {
-                    Console.WriteLine($"Skipping: {pvFolderPath}");
+                    //Console.WriteLine($"Skipping: {pvFolderPath}");
                 }
             }
 

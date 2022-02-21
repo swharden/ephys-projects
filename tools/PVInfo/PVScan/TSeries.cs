@@ -12,7 +12,7 @@ namespace PVInfo.PVScan
         public ScanType ScanType => ScanType.TSeries;
         public readonly double[] FrameTimes;
         public int FrameCount => FrameTimes.Length;
-        public double FrameAcquisitionTime => FrameTimes[1] - FrameTimes[0];
+        public double FrameAcquisitionTime => FrameTimes.Length >= 2 ? FrameTimes[1] - FrameTimes[0] : double.NaN;
         public double TotalAcquisitionTime => FrameAcquisitionTime * FrameCount;
 
         public TSeries(string path)

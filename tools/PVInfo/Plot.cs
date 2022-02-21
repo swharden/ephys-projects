@@ -21,6 +21,8 @@ namespace PVInfo
                     string linescanFolder = scan.PVState.FolderPath;
                     string[] filePathsRed = Directory.GetFiles(linescanFolder, $"*Ch1*.tif");
                     string[] filePathsGreen = Directory.GetFiles(linescanFolder, $"*Ch2*.tif");
+                    if (filePathsRed.Length == 0)
+                        continue;
 
                     PlotIntensity(filePathsRed, filePathsGreen, scan2.FrameTimes);
                 }
@@ -37,7 +39,7 @@ namespace PVInfo
             for (int i = 0; i < filePathsRed.Length; i++)
             {
                 Console.CursorLeft = 0;
-                Console.Write($"Analyzing {i + 1} of {filePathsRed.Length} ...");
+                Console.WriteLine($"Analyzing {i + 1} of {filePathsRed.Length} ...");
 
                 SciTIF.Image imgRed = new(filePathsRed[i]);
                 afuRed[i] = imgRed.GetMean();

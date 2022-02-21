@@ -26,7 +26,6 @@ namespace PVInfo
             if (!Path.GetFileName(linescanFolder).StartsWith("LineScan-"))
                 return;
 
-            Console.WriteLine($"Converting first linescan TIF to PNG in {linescanFolder}");
             foreach (string path in Directory.GetFiles(linescanFolder, "*000001.ome.tif"))
             {
                 string refFolder = Path.Combine(Path.GetDirectoryName(path), "References");
@@ -36,7 +35,6 @@ namespace PVInfo
 
         static void ConvertFolder(string tifFolder)
         {
-            Console.WriteLine($"Converting TIF to PNG in {tifFolder}");
             string[] paths = Directory
                 .GetFiles(tifFolder, "*.tif")
                 .Where(x => x.EndsWith(".tif", StringComparison.InvariantCultureIgnoreCase))
@@ -46,9 +44,12 @@ namespace PVInfo
                 ConvertFile(path);
         }
 
-        static void ConvertFile(string tifpath, string outputFolder = null)
+        static void ConvertFile(string tifpath, string outputFolder = null, bool overwrite = false)
         {
             string pngPath = tifpath + ".png";
+
+            if ((overwrite is false) && (File.Exists(pngPath)))
+                return;
 
             if (outputFolder is not null)
                 pngPath = Path.Combine(outputFolder, Path.GetFileName(pngPath));
