@@ -15,6 +15,7 @@ namespace SciTIF.Tests
         [TestCase("03.tif", 256, 256, 16, new int[] { 297, 285, 633 })]
         //[TestCase("04.tif", 512, 512, 32, new int[] { 297, 285, 633 })] // RGB
         [TestCase("05.tif", 512, 512, 16, new int[] { 1053, 1120, 954 })]
+        [TestCase("11.tif", 641, 500, 16, new int[] { 141, 206, 211 })]
         public void Test_Grayscale_PixelValues_FirstRow(string filename, int width, int height, int bitsPerPixel, int[] values)
         {
             string filePath = Path.Combine(DATA_FOLDER, filename);
@@ -28,6 +29,14 @@ namespace SciTIF.Tests
             {
                 Assert.AreEqual(values[i], image.Values[0, i], $"failed at pixel index {i}");
             }
+        }
+
+        [TestCase("11.tif", 27, 17, 6783)]
+        public void Test_Grayscale_PixelValues_SpecifiedLocation(string filename, int x, int y, int value)
+        {
+            string filePath = Path.Combine(DATA_FOLDER, filename);
+            SciTIF.Image image = new(filePath);
+            Assert.AreEqual(value, image.Values[y, x]);
         }
     }
 }
