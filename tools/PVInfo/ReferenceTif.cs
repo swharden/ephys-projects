@@ -54,6 +54,7 @@ namespace PVInfo
             if (outputFolder is not null)
                 pngPath = Path.Combine(outputFolder, Path.GetFileName(pngPath));
 
+            Console.WriteLine($"Converting to PNG: {tifpath}");
             var img = SciTIF.Image.FromTif(tifpath);
             img.AutoScale();
             img.SavePng(pngPath);
