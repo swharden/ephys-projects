@@ -2,6 +2,7 @@ using System;
 using BitMiracle.LibTiff.Classic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace SciTIF
 {
@@ -327,35 +328,37 @@ namespace SciTIF
             // create and fill a pixel array for the 8-bit final image
             int width = values.GetLength(1);
             int height = values.GetLength(0);
-            int pixelCount = width * height;
 
-            // TODO: proper stride (width must be multiple of 4)
-            byte[] pixelsOutput = new byte[pixelCount];
+            // Image bytes in memory always assume the width is a multiple of 4.
+            // This "width in memory" is called stride width.
+            int strideMultiple = 4;
+            int strideOverhang = width % strideMultiple;
+            int stridePadNeeded = strideMultiple - strideOverhang;
+            int strideWidth = width + stridePadNeeded;
+            byte[] pixelsOutput = new byte[strideWidth * height];
+
             for (int y = 0; y < height; y++)
-            {
                 for (int x = 0; x < width; x++)
-                {
-                    pixelsOutput[y * width + x] = Clamp(values[y, x]);
-                }
-            }
+                    pixelsOutput[y * strideWidth + x] = Clamp(values[y, x]);
 
             // create the output bitmap (8-bit indexed color)
-            var formatOutput = System.Drawing.Imaging.PixelFormat.Format8bppIndexed;
-            Bitmap bmp = new Bitmap(width, height, formatOutput);
-
-            // Create a grayscale palette, although other colors and LUTs could go here
-            System.Drawing.Imaging.ColorPalette pal = bmp.Palette;
-            for (int i = 0; i < 256; i++)
-                pal.Entries[i] = System.Drawing.Color.FromArgb(255, i, i, i);
-            bmp.Palette = pal;
-
-            // copy the new pixel data into the data of our output bitmap
-            var rect = new Rectangle(0, 0, width, height);
-            System.Drawing.Imaging.BitmapData bmpData = bmp.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadOnly, formatOutput);
-            System.Runtime.InteropServices.Marshal.Copy(pixelsOutput, 0, bmpData.Scan0, pixelsOutput.Length);
+            Bitmap bmp = new(strideWidth, height, PixelFormat.Format8bppIndexed);
+            Rectangle rect = new(0, 0, strideWidth, height);
+            BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
+            Marshal.Copy(pixelsOutput, 0, bmpData.Scan0, pixelsOutput.Length);
             bmp.UnlockBits(bmpData);
 
-            return bmp;
+            // Create a grayscale palette, although other colors and LUTs could go here
+            ColorPalette pal = bmp.Palette;
+            for (int i = 0; i < 256; i++)
+                pal.Entries[i] = Color.FromArgb(255, i, i, i);
+            bmp.Palette = pal;
+
+            // Return RGB image
+            Bitmap bmpFinal = new(width, height, PixelFormat.Format32bppPArgb);
+            Graphics gfx = Graphics.FromImage(bmpFinal);
+            gfx.DrawImage(bmp, 0, 0);
+            return bmpFinal;
         }
     }
 }
