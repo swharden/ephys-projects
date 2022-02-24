@@ -75,5 +75,12 @@ namespace PVInfo.PVScan
             sb.AppendLine($"LineScan image size: {HeightTimePx} x {HeightTimePx}");
             return sb.ToString();
         }
+
+        public static string[] GetScanTifs(string folder, int channel = 1)
+        {
+            return System.IO.Directory.GetFiles(folder, "*.tif")
+                .Where(x => x.Contains($"_Ch{channel}_00"))
+                .ToArray();
+        }
     }
 }

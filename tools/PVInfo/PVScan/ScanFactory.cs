@@ -33,6 +33,9 @@ namespace PVInfo.PVScan
             if (xml.Contains("type=\"MarkPoints\""))
                 return null;
 
+            if (xml.Contains("type=\"Point Scan\""))
+                return null;
+
             throw new NotImplementedException($"unsupported XML scan type: {xmlFilePath}");
         }
     }
