@@ -7,6 +7,12 @@ from dataclasses import dataclass
 
 @dataclass
 class DsiTriplet:
+    """
+    Holds paths for 3 ABFs composing a DSI set:
+        path1 - baseline
+        path2 - depolarization
+        path3 - recovery
+    """
     parent: str
     path1: pathlib.Path
     path2: pathlib.Path
@@ -64,6 +70,12 @@ def plotEvokedTrace(segment: np.ndarray, segmentXs: np.ndarray, xOffset: float, 
 
 
 def PlotTriplet(triplet: DsiTriplet, xOffset: float):
+    """
+    Given an ABF triplet, plot the mean of the first ABF
+    and the first sweep of the last ABF on top of it.
+    Traces will be plotted onto an existing future.
+    Apply a horizontal offset (in seconds).
+    """
 
     artifactPoint1 = 28936
     artifactPoint2 = 28970
@@ -101,11 +113,41 @@ def PlotTriplet(triplet: DsiTriplet, xOffset: float):
     plt.plot(segmentXs[minI], segment[minI], '.', ms=20, color='k')
 
 
+def createRepeatedTripletFigure(tripletList: list[DsiTriplet], saveAs: str):
+    """
+    Generate figures a figure showing each triplet in the given list.
+    This figure represents all DSI runs for a single cell.
+    """
+
+    plt.figure(figsize=(10, 6))
+
+    for i, triplet in enumerate(tripletList):
+        PlotTriplet(triplet, xOffset=.2 * i)
+
+    plt.grid(alpha=.5, ls='--')
+    plt.title(f"Parent: {tripletList[0].parent}")
+    plt.ylabel("Δ Current (pA)")
+    plt.gca().get_xaxis().set_visible(False)
+    plt.legend(loc="lower right")
+    plt.tight_layout()
+
+    if (saveAs is None):
+        plt.show()
+        return
+
+    print(saveAs)
+    plt.savefig(saveAs)
+    plt.close()
+
+
 def analyzeFolder(abfFolder: pathlib.Path):
     """
-    Generate auto-analysis figures for every DSI set in a folder.
+    Generate auto-analysis figures for every cell in a folder.
+    Each cell has many DSI sets, and a single figure will be made
+    for each cell (showing all DSI sets for that cell).
     """
     outputFolder = abfFolder.joinpath("_autoanalysis")
+
     for parent, tripletList in getDsiTriplets(abfFolder).items():
 
         print()
@@ -114,27 +156,8 @@ def analyzeFolder(abfFolder: pathlib.Path):
             print(f"Skipping because only {len(tripletList)} triplets")
             continue
 
-        plt.figure(figsize=(10, 6))
-
-        for i, triplet in enumerate(tripletList):
-            PlotTriplet(triplet, xOffset=.2 * i)
-
-        plt.grid(alpha=.5, ls='--')
-        plt.title(f"Parent: {parent}")
-        plt.ylabel("Δ Current (pA)")
-        plt.gca().get_xaxis().set_visible(False)
-        plt.legend(loc="lower right")
-        plt.tight_layout()
-
-        saveFig = False
-        if (saveFig):
-            outputPath = outputFolder.joinpath(parent+"_dsi.png")
-            print(outputPath)
-            plt.savefig(outputPath)
-            plt.close()
-        else:
-            plt.show()
-            return
+        saveAs = outputFolder.joinpath(parent+"_dsi.png")
+        createRepeatedTripletFigure(tripletList, saveAs)
 
 
 if __name__ == "__main__":
