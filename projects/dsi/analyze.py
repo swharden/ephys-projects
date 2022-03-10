@@ -156,11 +156,12 @@ def analyzeFolder(abfFolder: pathlib.Path):
             print(f"Skipping because only {len(tripletList)} triplets")
             continue
 
-        saveAs = outputFolder.joinpath(parent+"_dsi.png")
+        saveAs = outputFolder.joinpath(parent+"_dsi2.png")
         createRepeatedTripletFigure(tripletList, saveAs)
 
 
 if __name__ == "__main__":
     analyzeFolder(pathlib.Path(R"X:/Data/SD/DSI/CA1/DIC-1"))
     analyzeFolder(pathlib.Path(R"X:/Data/SD/DSI/CA1/ABFs"))
+    analyzeFolder(pathlib.Path(R"X:/Data/SD/DSI/CA1/Coronal"))
     print("DONE")
