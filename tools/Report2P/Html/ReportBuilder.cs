@@ -27,7 +27,7 @@ internal class ReportBuilder
             throw new DirectoryNotFoundException(folder2p);
 
         TemplateBase = File.ReadAllText(Path.Combine(templateFolder, "base.html"));
-        TemplateTimelineItem = File.ReadAllText(Path.Combine(templateFolder, "timeline-item.html"));
+        TemplateTimelineItem = File.ReadAllText(Path.Combine(templateFolder, "timeline-item-details.html"));
 
         string header = File.ReadAllText(Path.Combine(templateFolder, "header.html"))
             .Replace("{{TITLE}}", "2P Report")
@@ -38,10 +38,15 @@ internal class ReportBuilder
 
     public void Add(TimelineItem item, bool open = false)
     {
+        string timeOnly = string.IsNullOrEmpty(item.Timestamp)
+            ? ""
+            : DateTime.Parse(item.Timestamp).ToShortTimeString();
+
         string line = TemplateTimelineItem
             .Replace("{{TITLE}}", item.Title)
-            .Replace("{{TIMESTAMP}}", item.Timestamp)
+            .Replace("{{TIMESTAMP}}", timeOnly)
             .Replace("{{CONTENT}}", item.Content)
+            .Replace("{{ICON}}", item.Icon)
             .Replace("{{OPEN}}", open ? "open" : string.Empty);
 
         Content.AppendLine(line);

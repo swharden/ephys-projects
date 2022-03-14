@@ -28,10 +28,25 @@ public static class Program
             }
         }
 
+        IScan[] orderedScans = scans.OrderBy(x => x.PVState.Started).ToArray();
+
         page.DivStart("my-5");
-        foreach (var scan in scans.OrderBy(x => x.PVState.Started))
+
+        for (int i = 0; i < scans.Count; i++)
         {
-            TimelineItem item = new()
+            if (i > 0)
+            {
+                TimeSpan delta = orderedScans[i].PVState.Started - orderedScans[i - 1].PVState.Started;
+                if (delta > TimeSpan.FromMinutes(10))
+                {
+                    TimelineItems.Spacer spacer = new();
+                    page.Add(spacer);
+                }
+            }
+
+            IScan scan = orderedScans[i];
+
+            TimelineItems.Abf item = new()
             {
                 Title = Path.GetFileName(scan.PVState.FolderPath),
                 Timestamp = scan.PVState.Started.ToString(),
