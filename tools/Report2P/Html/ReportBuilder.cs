@@ -38,13 +38,9 @@ internal class ReportBuilder
 
     public void Add(TimelineItem item, bool open = false)
     {
-        string timeOnly = string.IsNullOrEmpty(item.Timestamp)
-            ? ""
-            : DateTime.Parse(item.Timestamp).ToShortTimeString();
-
         string line = TemplateTimelineItem
             .Replace("{{TITLE}}", item.Title)
-            .Replace("{{TIMESTAMP}}", timeOnly)
+            .Replace("{{TIMESTAMP}}", item.Timestamp.ToString("H:mm:ss"))
             .Replace("{{CONTENT}}", item.Content)
             .Replace("{{ICON}}", item.Icon)
             .Replace("{{OPEN}}", open ? "open" : string.Empty);
