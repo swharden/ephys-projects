@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PVInfo", "PVInfo.csproj", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SciTIF", "..\SciTIF\src\SciTIF\SciTIF.csproj", "{4A23C153-7287-4BAF-9881-D4007C0EE076}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Report2P", "..\Report2P\Report2P.csproj", "{AAA1F949-98AC-45D8-B676-3C15DDBCEA53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{4A23C153-7287-4BAF-9881-D4007C0EE076}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A23C153-7287-4BAF-9881-D4007C0EE076}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A23C153-7287-4BAF-9881-D4007C0EE076}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAA1F949-98AC-45D8-B676-3C15DDBCEA53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAA1F949-98AC-45D8-B676-3C15DDBCEA53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAA1F949-98AC-45D8-B676-3C15DDBCEA53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAA1F949-98AC-45D8-B676-3C15DDBCEA53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
