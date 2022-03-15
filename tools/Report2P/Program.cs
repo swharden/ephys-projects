@@ -6,8 +6,31 @@ public static class Program
 {
     public static void Main()
     {
-        string folder2p = @"X:/Data/OT-Cre/OT-Tom-uncaging/2022-02-22-ap5/2p";
+        string folder = @"X:\Data\SD\2p technique development\glutamate uncaging\2022-practice\2022-02-15-MNI\2p\LineScan-02152022-1438-235";
 
+        HtmlTemplates.Populate("../../../Templates");
+        Autoanalysis.TwoPhoton.AnalyzeDataFolder(folder);
+
+        /*
+        string folder2p = @"X:/Data/OT-Cre/OT-Tom-uncaging/2022-02-22-ap5/2p";
+        string[] subfolders = Directory.GetDirectories(folder2p);
+        foreach (string subfolder in subfolders)
+        {
+            IScan? scan = PvXml.ScanFactory.FromPVFolder(subfolder);
+            if (scan is null)
+            {
+                Console.WriteLine($"Skipping: {subfolder}");
+                continue;
+            }
+
+            Console.WriteLine($"Creating page for: {subfolder}");
+            break;
+        }
+        */
+    }
+
+    private static void MakeTimeline(string folder2p)
+    {
         List<TimelineItem> unsortedItems = new();
         unsortedItems.AddRange(GetTimelineItemsAbf(folder2p));
         unsortedItems.AddRange(GetTimelineItems2P(folder2p));
