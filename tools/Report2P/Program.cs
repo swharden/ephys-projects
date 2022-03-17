@@ -8,8 +8,14 @@ public static class Program
     {
         string folder = @"X:\Data\SD\2p technique development\glutamate uncaging\2022-practice\2022-02-15-MNI\2p\LineScan-02152022-1438-235";
 
+        Experiment.Linescan ls = new(folder);
+        ls.Analyze(true);
+        Console.WriteLine(ls);
+
+        /*
         HtmlTemplates.Populate("../../../Templates");
         Autoanalysis.TwoPhoton.AnalyzeDataFolder(folder);
+        */
 
         /*
         string folder2p = @"X:/Data/OT-Cre/OT-Tom-uncaging/2022-02-22-ap5/2p";

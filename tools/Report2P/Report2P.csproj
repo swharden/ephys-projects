@@ -13,6 +13,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\..\SciTIF\src\SciTIF\SciTIF.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Update="Icons\*.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
