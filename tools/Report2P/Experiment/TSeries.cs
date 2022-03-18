@@ -1,6 +1,6 @@
 ﻿namespace Report2P.Experiment;
 
-internal class Linescan : IExperiment
+internal class TSeries : IExperiment
 {
     public string Path { get; private set; }
 
@@ -13,12 +13,12 @@ internal class Linescan : IExperiment
 
     private string ReferencesFolder => System.IO.Path.Combine(Path, "References");
 
-    private readonly PvXml.ScanTypes.LineScan Scan;
+    private readonly PvXml.ScanTypes.TSeries Scan;
 
-    public Linescan(string folder)
+    public TSeries(string folder)
     {
         Path = System.IO.Path.GetFullPath(folder);
-        Scan = new PvXml.ScanTypes.LineScan(folder);
+        Scan = new PvXml.ScanTypes.TSeries(folder);
     }
 
     public void Analyze(bool clear = false)
@@ -30,7 +30,6 @@ internal class Linescan : IExperiment
             Directory.CreateDirectory(AutoanalysisFolder);
 
         CreateReferenceImages();
-        CreateDataImages();
         CreateAnalysisImages();
     }
 
@@ -44,40 +43,46 @@ internal class Linescan : IExperiment
         string[] tifPathsR = tifPaths.Where(x => x.Contains("_Ch1_")).ToArray();
         string[] tifPathsG = tifPaths.Where(x => x.Contains("_Ch2_")).ToArray();
 
-        for (int i = 0; i < tifPathsR.Length; i++)
-        {
-            SciTIF.TifFile tifR = new(tifPathsR[i]);
-            SciTIF.TifFile tifG = new(tifPathsG[i]);
+        PlotIntensityOverTime(tifPathsR, "intensity_red.png");
+        PlotIntensityOverTime(tifPathsG, "intensity_green.png");
 
-            double[] dataR = CollapseHorizontally(tifR.Channels[0].Values);
-            double[] dataG = CollapseHorizontally(tifG.Channels[0].Values);
-
-            ScottPlot.Plot plt = new(600, 400);
-
-            plt.AddSignal(dataR, 1.0 / Scan.ScanLinePeriod, System.Drawing.Color.Red);
-            plt.AddSignal(dataG, 1.0 / Scan.ScanLinePeriod, System.Drawing.Color.Green);
-            plt.SetAxisLimits(yMin: 0);
-            plt.Title(System.IO.Path.GetFileName(Path));
-            plt.YLabel("PMT Value (AFU)");
-            plt.XLabel("Time (seconds)");
-
-            plt.SaveFig(saveFilePath);
-        }
     }
-    private static double[] CollapseHorizontally(double[,] values)
+
+    private void PlotIntensityOverTime(string[] tifPaths, string outputFilename, bool overwrite = false)
     {
-        double[] collapsed = new double[values.GetLength(0)];
-        for (int y = 0; y < values.GetLength(0); y++)
+        if (tifPaths.Length == 0)
+            return;
+
+        string outputFilePath = System.IO.Path.Combine(AutoanalysisFolder, outputFilename);
+        if (overwrite == false && File.Exists(outputFilePath))
+            return;
+
+        double[] values = new double[tifPaths.Length];
+        for (int i = 0; i < tifPaths.Length; i++)
         {
-            double xSum = 0;
-            for (int x = 0; x < values.GetLength(1); x++)
-            {
-                xSum += values[y, x];
-            }
-            double xMean = xSum / values.GetLength(1);
-            collapsed[y] = xMean;
+            SciTIF.TifFile tif = new(tifPaths[i]);
+            values[i] = GetMean(tif.Channels[0].Values);
         }
-        return collapsed;
+
+        ScottPlot.Plot plt = new(600, 400);
+        plt.AddScatter(Scan.FrameTimes, values);
+        plt.SetAxisLimits(yMin: 0);
+        plt.Title(System.IO.Path.GetFileName(Path));
+        plt.YLabel("PMT Value (AFU)");
+        plt.XLabel("Time (seconds)");
+
+        plt.SaveFig(outputFilePath);
+    }
+
+    private double GetMean(double[,] data)
+    {
+        double mean = 0;
+
+        for (int y = 0; y < data.GetLength(0); y++)
+            for (int x = 0; x < data.GetLength(1); x++)
+                mean += data[y, x];
+
+        return mean / data.GetLength(0) / data.GetLength(1);
     }
 
     private void ConvertTif(string tifPath, string prefix, bool overwrite = false)
@@ -100,18 +105,5 @@ internal class Linescan : IExperiment
         {
             ConvertTif(tifPath, "ref_");
         }
-    }
-
-    private void CreateDataImages()
-    {
-        string[] tifPaths = Directory.GetFiles(Path, "*.ome.tif").ToArray();
-
-        string[] ch1Paths = tifPaths.Where(x => x.Contains("_Ch1_")).ToArray();
-        if (ch1Paths.Any())
-            ConvertTif(ch1Paths.First(), "data_ch1_");
-
-        string[] ch2Paths = tifPaths.Where(x => x.Contains("_Ch2_")).ToArray();
-        if (ch2Paths.Any())
-            ConvertTif(ch1Paths.First(), "data_ch2_");
     }
 }

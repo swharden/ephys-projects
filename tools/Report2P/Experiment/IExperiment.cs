@@ -6,5 +6,6 @@ public interface IExperiment
     string AutoanalysisFolder { get; }
     string Details { get; }
     ImageGroup ImageGroups { get; }
-    public void Analyze(bool clear);
+    DateTime DateTime { get; }
+    public void Analyze(bool clear = false);
 }
