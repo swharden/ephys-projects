@@ -1,0 +1,1 @@
+copy *.png "X:\Lab Documents\network\htdocs\img\icons"
