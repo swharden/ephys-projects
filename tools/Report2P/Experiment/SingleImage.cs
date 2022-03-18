@@ -7,7 +7,7 @@ internal class SingleImage : IExperiment
     public string Details => Scan.GetSummary();
     public DateTime DateTime => Scan.PVState.DateTime;
 
-    public ImageGroup ImageGroups { get; private set; } = new();
+    public List<ImageGroup> ImageGroups { get; private set; } = new();
 
     public string AutoanalysisFolder => System.IO.Path.Combine(Path, "autoanalysis");
 
@@ -19,6 +19,16 @@ internal class SingleImage : IExperiment
     {
         Path = System.IO.Path.GetFullPath(folder);
         Scan = new PvXml.ScanTypes.SingleImage(folder);
+
+        ImageGroups.Add(
+            new ImageGroup()
+            {
+                Title = "Images",
+                Paths = Directory.GetFiles(AutoanalysisFolder, "*.png")
+                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
+                    .ToArray(),
+            }
+        );
     }
 
     public void Analyze(bool clear = false)

@@ -2,6 +2,6 @@
 
 public class ImageGroup
 {
-    public string Title = string.Empty;
-    public readonly List<string> Paths = new();
+    public string Title { get; init; } = string.Empty;
+    public string[] Paths { get; init; } = Array.Empty<string>();
 }

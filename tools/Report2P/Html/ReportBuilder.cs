@@ -38,10 +38,33 @@ internal class ReportBuilder
 
     public void Add(TimelineItem item, bool open = false)
     {
+        StringBuilder sb = new();
+        string timestamp = string.Empty;
+
+        if (item.DateTime != DateTime.MinValue)
+        {
+            timestamp = $"<div style='font-size: .8em;'>" +
+                $"<div>{TimeOnly.FromDateTime(item.DateTime).ToLongTimeString()}</div>" +
+                $"<div>(+{item.ExperimentTime.Minutes}:{item.ExperimentTime.Seconds:00})</div>" +
+                $"</div>";
+
+            sb.AppendLine($"<h3>PrairieView Configuration</h3>");
+            sb.AppendLine($"<pre>{item.Content}</pre>");
+
+            foreach(Experiment.ImageGroup grp in item.ImageGroups)
+            {
+                sb.AppendLine($"<h3>{grp.Title}</h3>");
+                foreach(string path in grp.Paths)
+                {
+                    sb.AppendLine($"<a href='{path}'><img src='{path}' height='300'></a>");
+                }
+            }
+        }
+
         string line = TemplateTimelineItem
             .Replace("{{TITLE}}", item.Title)
-            .Replace("{{TIMESTAMP}}", item.Timestamp.ToString("H:mm:ss"))
-            .Replace("{{CONTENT}}", item.Content)
+            .Replace("{{TIMESTAMP}}", timestamp)
+            .Replace("{{CONTENT}}", sb.ToString())
             .Replace("{{ICON}}", item.Icon)
             .Replace("{{OPEN}}", open ? "open" : string.Empty);
 
@@ -56,7 +79,6 @@ internal class ReportBuilder
 
         path = Path.GetFullPath(path);
         File.WriteAllText(path, html);
-        Console.WriteLine(path);
     }
 
     public void DivStart(string classes)

@@ -4,10 +4,10 @@ internal class MarkPoints : IExperiment
 {
     public string Path { get; private set; }
 
-    public string Details => "summary not implemented";
+    public string Details => "uncaging point shape analysis not implemented";
     public DateTime DateTime => Scan.DateTime;
 
-    public ImageGroup ImageGroups { get; private set; } = new();
+    public List<ImageGroup> ImageGroups { get; private set; } = new();
 
     public string AutoanalysisFolder => System.IO.Path.Combine(Path, "autoanalysis");
 

@@ -5,7 +5,7 @@ public interface IExperiment
     string Path { get; }
     string AutoanalysisFolder { get; }
     string Details { get; }
-    ImageGroup ImageGroups { get; }
+    List<ImageGroup> ImageGroups { get; }
     DateTime DateTime { get; }
     public void Analyze(bool clear = false);
 }

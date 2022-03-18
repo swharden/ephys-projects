@@ -34,7 +34,7 @@ namespace Report2P
 
         private static TimelineItem[] SortedWithSpacers(TimelineItem[] itemsIn)
         {
-            TimelineItem[] itemsInSorted = itemsIn.OrderBy(x => x.Timestamp).ToArray();
+            TimelineItem[] itemsInSorted = itemsIn.OrderBy(x => x.DateTime).ToArray();
 
             List<TimelineItem> itemsOut = new();
 
@@ -45,7 +45,7 @@ namespace Report2P
                 if (i > 0)
                 {
                     TimelineItem prevItem = itemsInSorted[i - 1];
-                    TimeSpan delta = thisItem.Timestamp - prevItem.Timestamp;
+                    TimeSpan delta = thisItem.DateTime - prevItem.DateTime;
                     if (delta > TimeSpan.FromMinutes(10))
                     {
                         TimelineItems.Spacer spacer = new();
@@ -82,7 +82,7 @@ namespace Report2P
                 TimelineItems.Abf item = new()
                 {
                     Title = Path.GetFileName(abfPath),
-                    Timestamp = Abf.AbfTools.StartDateTime(abf),
+                    DateTime = Abf.AbfTools.StartDateTime(abf),
                     Content = abf.ToString(),
                 };
 
@@ -111,7 +111,7 @@ namespace Report2P
                 TimelineItems.Abf item = new()
                 {
                     Title = Path.GetFileName(scan.PVState.FolderPath),
-                    Timestamp = scan.PVState.Started,
+                    DateTime = scan.PVState.Started,
                     Content = "<pre>" + scan.GetSummary() + "</pre>",
                 };
 

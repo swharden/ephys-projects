@@ -7,7 +7,7 @@ internal class ZSeries : IExperiment
     public string Details => Scan.GetSummary();
     public DateTime DateTime => Scan.PVState.DateTime;
 
-    public ImageGroup ImageGroups { get; private set; } = new();
+    public List<ImageGroup> ImageGroups { get; private set; } = new();
 
     public string AutoanalysisFolder => System.IO.Path.Combine(Path, "autoanalysis");
 
@@ -28,6 +28,16 @@ internal class ZSeries : IExperiment
             Directory.CreateDirectory(AutoanalysisFolder);
 
         CreateProjectionImages();
+
+        ImageGroups.Add(
+            new ImageGroup()
+            {
+                Title = "Maximum Projections",
+                Paths = Directory.GetFiles(AutoanalysisFolder, "proj_*.png")
+                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
+                    .ToArray(),
+            }
+        );
     }
 
     private void CreateProjectionImages()

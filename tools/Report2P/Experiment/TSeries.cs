@@ -7,7 +7,7 @@ internal class TSeries : IExperiment
     public string Details => Scan.GetSummary();
     public DateTime DateTime => Scan.PVState.DateTime;
 
-    public ImageGroup ImageGroups { get; private set; } = new();
+    public List<ImageGroup> ImageGroups { get; private set; } = new();
 
     public string AutoanalysisFolder => System.IO.Path.Combine(Path, "autoanalysis");
 
@@ -31,6 +31,26 @@ internal class TSeries : IExperiment
 
         CreateReferenceImages();
         CreateAnalysisImages();
+
+        ImageGroups.Add(
+            new ImageGroup()
+            {
+                Title = "Analyses",
+                Paths = Directory.GetFiles(AutoanalysisFolder, "intensity_*.png")
+                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
+                    .ToArray(),
+            }
+        );
+
+        ImageGroups.Add(
+            new ImageGroup()
+            {
+                Title = "Reference Images",
+                Paths = Directory.GetFiles(AutoanalysisFolder, "ref_*.png")
+                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
+                    .ToArray(),
+            }
+        );
     }
 
     private void CreateAnalysisImages(bool overwrite = false)
