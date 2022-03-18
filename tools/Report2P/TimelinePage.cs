@@ -63,7 +63,7 @@ internal class TimelinePage
                     Title = Path.GetFileName(experiment.Path),
                     Content = experiment.Details,
                     DateTime = experiment.DateTime,
-                    Icon = "abf",
+                    Icon = GetExperimentIcon(experiment),
                     ImageGroups = experiment.ImageGroups.ToArray(),
                 };
 
@@ -76,6 +76,19 @@ internal class TimelinePage
         }
 
         return timelineItems.ToArray();
+    }
+
+    private static string GetExperimentIcon(IExperiment experiment)
+    {
+        return experiment switch
+        {
+            Linescan => "linescan",
+            MarkPoints => "markpoints",
+            SingleImage => "singleimage",
+            TSeries => "tseries",
+            ZSeries => "zseries",
+            _ => "line",
+        };
     }
 
     private static void MakeIndexPage(string folderOf2pFolders, TimelineItem[] timelineItems)
