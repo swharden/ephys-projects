@@ -7,14 +7,46 @@ public static class Program
 {
     public static void Main()
     {
-        string folderOf2pFolders = @"X:/Data/OT-Cre/OT-Tom-uncaging/2022-02-23-ap5/2p";
-        //string folderOf2pFolders = @"X:\Data\OT-Cre\OT-Tom-uncaging\2022-02-27-NMDA\2p\";
-        //string folderOf2pFolders = @"X:\Data\C57\FOS-TRAP\nodose-injection\gcamp\2P";
+        MakeIndex(@"X:/Data/OT-Cre/OT-Tom-uncaging/2022-02-23-ap5/2p");
+        MakeIndex(@"X:\Data\OT-Cre\OT-Tom-uncaging\2022-02-27-NMDA\2p\");
+        MakeIndex(@"X:\Data\C57\FOS-TRAP\nodose-injection\gcamp\2P");
+    }
 
+    private static void MakeIndex(string folderOf2pFolders)
+    {
         List<TimelineItem> timelineItems = new();
         timelineItems.AddRange(GetTimelineItems2P(folderOf2pFolders));
+        timelineItems.AddRange(GetTimelineItemsAbf(folderOf2pFolders));
 
         MakeIndexPage(folderOf2pFolders, timelineItems.ToArray());
+    }
+
+    private static TimelineItem[] GetTimelineItemsAbf(string folderOf2pFolders)
+    {
+        string abfFolder = Path.GetFullPath(Path.Combine(folderOf2pFolders, "../abfs"));
+        Console.WriteLine(abfFolder);
+        if (!Directory.Exists(abfFolder))
+            return Array.Empty<TimelineItem>();
+
+        List<TimelineItem> timelineItems = new();
+
+        foreach (string abfPath in Directory.GetFiles(abfFolder, "*.abf").Where(x => x.EndsWith(".abf")))
+        {
+            Console.WriteLine($"Analyzing: {abfPath}");
+            AbfSharp.ABFFIO.ABF abf = new(abfPath, preloadSweepData: false);
+
+            TimelineItem item = new()
+            {
+                Title = Path.GetFileName(abfPath),
+                Content = $"<pre>{abf}</pre><br><br>abf auto-analysis images will go here",
+                DateTime = Abf.AbfTools.StartDateTime(abf),
+                Icon = "abf",
+            };
+
+            timelineItems.Add(item);
+        }
+
+        return timelineItems.ToArray();
     }
 
     private static TimelineItem[] GetTimelineItems2P(string folderOf2pFolders)
