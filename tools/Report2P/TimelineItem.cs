@@ -6,6 +6,6 @@ internal class TimelineItem
     public TimeSpan ExperimentTime { get; set; } = TimeSpan.Zero;
     public string Title { get; init; } = string.Empty;
     public string Content { get; init; } = string.Empty;
-    public string Icon { get; init; } = "line";
+    public TimelineIcon Icon { get; init; } = TimelineIcon.Line;
     public Experiment.ImageGroup[] ImageGroups = Array.Empty<Experiment.ImageGroup>();
 }

@@ -31,16 +31,38 @@ internal class TimelinePage
         {
             Console.WriteLine($"Analyzing: {abfPath}");
             AbfSharp.ABFFIO.ABF abf = new(abfPath, preloadSweepData: false);
+            DateTime abfDateTime = GetAbfDateTime(abf);
 
-            TimelineItem item = new()
+            TimelineItem abfItem = new()
             {
-                Title = Path.GetFileName(abfPath),
-                Content = $"<pre>{abf}</pre><br><br>abf auto-analysis images will go here",
-                DateTime = GetAbfDateTime(abf),
-                Icon = "abf",
+                Title = $"{Path.GetFileName(abfPath)} ({Path.GetFileNameWithoutExtension(abf.Header.sProtocolPath)})",
+                Content = $"<div><code>{abfPath}</code></div>" + $"<div><code>{abf}</code></div>",
+                DateTime = abfDateTime,
+                Icon = TimelineIcon.Ephys,
             };
 
-            timelineItems.Add(item);
+            string autoAnalysisPath = Path.Combine(Path.GetDirectoryName(abfPath)!, "_autoanalysis");
+            if (Directory.Exists(autoAnalysisPath))
+            {
+                string[] paths = Directory.GetFiles(autoAnalysisPath, Path.GetFileNameWithoutExtension(abfPath) + "*.png");
+                if (paths.Length == 0)
+                    continue;
+
+                string[] urls = paths
+                    .Select(x => x.Replace("X:", "http://192.168.1.9/X"))
+                    .Select(x => x.Replace("\\", "/"))
+                    .ToArray();
+
+                ImageGroup images = new()
+                {
+                    Title = "ABF Analyses",
+                    Paths = urls,
+                };
+
+                abfItem.ImageGroups = new ImageGroup[] { images };
+            }
+
+            timelineItems.Add(abfItem);
         }
 
         return timelineItems.ToArray();
@@ -78,16 +100,16 @@ internal class TimelinePage
         return timelineItems.ToArray();
     }
 
-    private static string GetExperimentIcon(IExperiment experiment)
+    private static TimelineIcon GetExperimentIcon(IExperiment experiment)
     {
         return experiment switch
         {
-            Linescan => "linescan",
-            MarkPoints => "markpoints",
-            SingleImage => "singleimage",
-            TSeries => "tseries",
-            ZSeries => "zseries",
-            _ => "line",
+            Linescan => TimelineIcon.Linescan,
+            MarkPoints => TimelineIcon.MarkPoints,
+            SingleImage => TimelineIcon.SingleImage,
+            TSeries => TimelineIcon.TSeries,
+            ZSeries => TimelineIcon.ZSeries,
+            _ => TimelineIcon.Line,
         };
     }
 
@@ -106,7 +128,7 @@ internal class TimelinePage
         {
             if (item.DateTime - lastItemTime > TimeSpan.FromMinutes(10))
             {
-                page.Add(new TimelineItems.Spacer());
+                page.Add(new TimelineItem() { Icon = TimelineIcon.Break });
                 lastItemTime = item.DateTime;
                 experimentStartTime = item.DateTime;
             }

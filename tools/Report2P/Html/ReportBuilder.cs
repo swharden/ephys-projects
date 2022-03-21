@@ -8,7 +8,7 @@ namespace Report2P.Html;
 
 internal class ReportBuilder
 {
-    public string Title = "2P Report";
+    public readonly string Title;
 
     private readonly string TemplateBase;
 
@@ -29,9 +29,12 @@ internal class ReportBuilder
         TemplateBase = File.ReadAllText(Path.Combine(templateFolder, "base.html"));
         TemplateTimelineItem = File.ReadAllText(Path.Combine(templateFolder, "timeline-item-details.html"));
 
+        Title = "2P Report";
         string header = File.ReadAllText(Path.Combine(templateFolder, "header.html"))
-            .Replace("{{TITLE}}", "2P Report")
-            .Replace("{{SUBTITLE}}", folder2p);
+            .Replace("{{TITLE}}", Title)
+            .Replace("{{SUBTITLE}}", folder2p)
+            .Replace("{{DATE}}", DateTime.Now.ToShortDateString())
+            .Replace("{{TIME}}", DateTime.Now.ToShortTimeString());
 
         Content.AppendLine(header);
     }
@@ -51,10 +54,10 @@ internal class ReportBuilder
             sb.AppendLine($"<h3>PrairieView Configuration</h3>");
             sb.AppendLine($"<pre>{item.Content}</pre>");
 
-            foreach(Experiment.ImageGroup grp in item.ImageGroups)
+            foreach (Experiment.ImageGroup grp in item.ImageGroups)
             {
                 sb.AppendLine($"<h3>{grp.Title}</h3>");
-                foreach(string path in grp.Paths)
+                foreach (string path in grp.Paths)
                 {
                     sb.AppendLine($"<a href='{path}'><img src='{path}' height='300'></a>");
                 }
@@ -65,7 +68,7 @@ internal class ReportBuilder
             .Replace("{{TITLE}}", item.Title)
             .Replace("{{TIMESTAMP}}", timestamp)
             .Replace("{{CONTENT}}", sb.ToString())
-            .Replace("{{ICON}}", item.Icon)
+            .Replace("{{ICON}}", item.Icon.ToString().ToLower())
             .Replace("{{OPEN}}", open ? "open" : string.Empty);
 
         Content.AppendLine(line);
