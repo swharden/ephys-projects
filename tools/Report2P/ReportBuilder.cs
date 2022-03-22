@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Report2P.Html;
+namespace Report2P;
 
 internal class ReportBuilder
 {
@@ -29,7 +29,8 @@ internal class ReportBuilder
         TemplateBase = File.ReadAllText(Path.Combine(templateFolder, "base.html"));
         TemplateTimelineItem = File.ReadAllText(Path.Combine(templateFolder, "timeline-item-details.html"));
 
-        Title = "2P Report";
+        string parentFolderName = Path.GetFileName(Path.GetDirectoryName(folder2p)) ?? string.Empty;
+        Title = $"2P Report: {parentFolderName}";
         string header = File.ReadAllText(Path.Combine(templateFolder, "header.html"))
             .Replace("{{TITLE}}", Title)
             .Replace("{{SUBTITLE}}", folder2p)
