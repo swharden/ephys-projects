@@ -118,9 +118,9 @@ internal class TimelinePage
         TimelineItem[] sortedTimelineItems = timelineItems.OrderBy(x => x.DateTime).ToArray(); ;
 
         string templateFolder = "../../../Templates";
-        Html.ReportBuilder page = new(templateFolder, folderOf2pFolders);
+        ReportBuilder report = new(templateFolder, folderOf2pFolders);
 
-        page.DivStart("my-5");
+        report.DivStart("my-5");
         DateTime lastItemTime = sortedTimelineItems.First().DateTime;
         DateTime experimentStartTime = sortedTimelineItems.First().DateTime;
 
@@ -128,18 +128,18 @@ internal class TimelinePage
         {
             if (item.DateTime - lastItemTime > TimeSpan.FromMinutes(10))
             {
-                page.Add(new TimelineItem() { Icon = TimelineIcon.Break });
+                report.Add(new TimelineItem() { Icon = TimelineIcon.Break });
                 lastItemTime = item.DateTime;
                 experimentStartTime = item.DateTime;
             }
 
             item.ExperimentTime = item.DateTime - experimentStartTime;
-            page.Add(item);
+            report.Add(item);
         }
-        page.DivEnd();
+        report.DivEnd();
 
         string outputFilePath = Path.Combine(folderOf2pFolders, "index.html");
-        page.Save(outputFilePath);
+        report.Save(outputFilePath);
         Console.WriteLine(outputFilePath);
     }
 
