@@ -1,5 +1,6 @@
 import pathlib
 import pyabf
+import pyabf.tools.memtest
 import matplotlib.pyplot as plt
 import numpy as np
 from dataclasses import dataclass
@@ -140,6 +141,46 @@ def createRepeatedTripletFigure(tripletList: list[DsiTriplet], saveAs: str):
     plt.close()
 
 
+def createAccessFigure(tripletList: list[DsiTriplet], saveAs: str):
+    """
+    Generate figures showing Ra for each baseline ABF in all sets
+    """
+
+    plt.figure(figsize=(6, 4))
+
+    xs = []
+    ys = []
+    yErrs = []
+
+    for i, triplet in enumerate(tripletList):
+        abf = pyabf.ABF(triplet.path1)
+        memtest = pyabf.tools.memtest.Memtest(abf)
+        resistances = [x for x in memtest.Ra.values]
+        mean = np.mean(resistances)
+        stderr = np.std(resistances) / np.sqrt(len(resistances))
+        xs.append(i)
+        ys.append(mean)
+        yErrs.append(stderr)
+
+    plt.errorbar(xs, ys, yErrs, fmt='-o', color='r', capsize=5)
+    
+    plt.grid(alpha=.5, ls='--')
+    plt.title(f"Parent: {tripletList[0].parent}")
+    plt.ylabel("Access Resistance (MΩ)")
+    plt.gca().get_xaxis().set_visible(False)
+    plt.legend(loc="lower right")
+    plt.axis([None, None, 0, None])
+    plt.tight_layout()
+
+    if (saveAs is None):
+        plt.show()
+        return
+
+    print(saveAs)
+    plt.savefig(saveAs)
+    plt.close()
+
+
 def analyzeFolder(abfFolder: pathlib.Path):
     """
     Generate auto-analysis figures for every cell in a folder.
@@ -156,8 +197,11 @@ def analyzeFolder(abfFolder: pathlib.Path):
             print(f"Skipping because only {len(tripletList)} triplets")
             continue
 
-        saveAs = outputFolder.joinpath(parent+"_dsi2.png")
-        createRepeatedTripletFigure(tripletList, saveAs)
+        createRepeatedTripletFigure(tripletList,
+                                    saveAs=outputFolder.joinpath(parent+"_dsi2.png"))
+
+        createAccessFigure(tripletList,
+                           saveAs=outputFolder.joinpath(parent+"_ra.png"))
 
 
 if __name__ == "__main__":
