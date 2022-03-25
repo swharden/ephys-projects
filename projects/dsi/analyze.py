@@ -163,7 +163,7 @@ def createAccessFigure(tripletList: list[DsiTriplet], saveAs: str):
         yErrs.append(stderr)
 
     plt.errorbar(xs, ys, yErrs, fmt='-o', color='r', capsize=5)
-    
+
     plt.grid(alpha=.5, ls='--')
     plt.title(f"Parent: {tripletList[0].parent}")
     plt.ylabel("Access Resistance (MΩ)")
@@ -193,7 +193,7 @@ def analyzeFolder(abfFolder: pathlib.Path):
 
         print()
         print(parent)
-        if (len(tripletList) < 5):
+        if (len(tripletList) < 3):
             print(f"Skipping because only {len(tripletList)} triplets")
             continue
 
@@ -205,7 +205,8 @@ def analyzeFolder(abfFolder: pathlib.Path):
 
 
 if __name__ == "__main__":
+    #analyzeFolder(pathlib.Path(R"X:/Data/SD/DSI/PFC/abfs"))
     analyzeFolder(pathlib.Path(R"X:/Data/SD/DSI/CA1/DIC-1"))
-    analyzeFolder(pathlib.Path(R"X:/Data/SD/DSI/CA1/ABFs"))
-    analyzeFolder(pathlib.Path(R"X:/Data/SD/DSI/CA1/Coronal"))
+    #analyzeFolder(pathlib.Path(R"X:/Data/SD/DSI/CA1/ABFs"))
+    #analyzeFolder(pathlib.Path(R"X:/Data/SD/DSI/CA1/Coronal"))
     print("DONE")
