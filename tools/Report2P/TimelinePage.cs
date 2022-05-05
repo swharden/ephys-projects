@@ -15,6 +15,9 @@ internal class TimelinePage
         timelineItems.AddRange(GetTimelineItems2P(folderOf2pFolders));
         timelineItems.AddRange(GetTimelineItemsAbf(folderOf2pFolders));
 
+        if (!timelineItems.Any())
+            throw new InvalidOperationException("no timeline items found");
+
         MakeIndexPage(folderOf2pFolders, timelineItems.ToArray());
     }
 
@@ -76,6 +79,7 @@ internal class TimelinePage
         {
             try
             {
+                Console.WriteLine($"Scanning: {folder}");
                 IExperiment experiment = ExperimentFactory.GetExperiment(folder);
                 Console.WriteLine($"Analyzing: {experiment.Path}");
                 experiment.Analyze();
@@ -115,7 +119,9 @@ internal class TimelinePage
 
     private static void MakeIndexPage(string folderOf2pFolders, TimelineItem[] timelineItems)
     {
-        TimelineItem[] sortedTimelineItems = timelineItems.OrderBy(x => x.DateTime).ToArray(); ;
+        TimelineItem[] sortedTimelineItems = timelineItems.OrderBy(x => x.DateTime).ToArray();
+        if (sortedTimelineItems.Length == 0)
+            throw new InvalidOperationException("no timeline items found");
 
         string templateFolder = "../../../Templates";
         ReportBuilder report = new(templateFolder, folderOf2pFolders);

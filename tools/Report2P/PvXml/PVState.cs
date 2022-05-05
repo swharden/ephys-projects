@@ -100,7 +100,7 @@ public class PVState
     private static string GetVersion(XDocument xmlDoc)
     {
         string version = xmlDoc.Element("PVScan").Attribute("version").Value;
-        string[] supportedVersions = { "5.4.64.500", "5.5.64.500" };
+        string[] supportedVersions = { "5.4.64.500", "5.5.64.500", "5.6.64.200" };
         if (!supportedVersions.Contains(version))
             throw new NotImplementedException($"unsupported PV version: {version}");
         return version;
