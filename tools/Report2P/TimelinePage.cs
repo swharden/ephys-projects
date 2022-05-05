@@ -126,6 +126,12 @@ internal class TimelinePage
         string templateFolder = "../../../Templates";
         ReportBuilder report = new(templateFolder, folderOf2pFolders);
 
+        string experimentFilePath = Path.Combine(folderOf2pFolders, "experiment.txt");
+        if (File.Exists(experimentFilePath))
+        {
+            report.AddExperimentNotes(File.ReadAllText(experimentFilePath));
+        }
+
         report.DivStart("my-5");
         DateTime lastItemTime = sortedTimelineItems.First().DateTime;
         DateTime experimentStartTime = sortedTimelineItems.First().DateTime;

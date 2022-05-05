@@ -95,4 +95,10 @@ internal class ReportBuilder
     {
         Content.Append("</div>");
     }
+
+    public void AddExperimentNotes(string text)
+    {
+        Content.Append("<h3 class='mt-4'>Experiment Notes</h3>");
+        Content.Append($"<pre>{text}</pre>");
+    }
 }
