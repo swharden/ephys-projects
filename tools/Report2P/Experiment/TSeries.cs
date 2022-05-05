@@ -53,29 +53,27 @@ internal class TSeries : IExperiment
         );
     }
 
-    private void CreateAnalysisImages(bool overwrite = false)
+    private void CreateAnalysisImages(bool overwrite = true)
     {
-        string saveFilePath = System.IO.Path.Combine(AutoanalysisFolder, "linescan_curves.png");
-        if ((overwrite == false) && (File.Exists(saveFilePath)))
-            return;
-
         string[] tifPaths = Directory.GetFiles(Path, "*.ome.tif").ToArray();
         string[] tifPathsR = tifPaths.Where(x => x.Contains("_Ch1_")).ToArray();
         string[] tifPathsG = tifPaths.Where(x => x.Contains("_Ch2_")).ToArray();
 
-        PlotIntensityOverTime(tifPathsR, "intensity_red.png");
-        PlotIntensityOverTime(tifPathsG, "intensity_green.png");
+        double[] redValues = PlotIntensityOverTime(tifPathsR, "intensity_red.png", overwrite, System.Drawing.Color.Red);
+        double[] greenValues = PlotIntensityOverTime(tifPathsG, "intensity_green.png", overwrite, System.Drawing.Color.Green);
 
+        string datFilePath = System.IO.Path.Combine(AutoanalysisFolder, "intensity.dat");
+        OriginDatFile.Write(Scan.FrameTimes, redValues, greenValues, datFilePath);
     }
 
-    private void PlotIntensityOverTime(string[] tifPaths, string outputFilename, bool overwrite = false)
+    private double[] PlotIntensityOverTime(string[] tifPaths, string outputFilename, bool overwrite = false, System.Drawing.Color? color = null)
     {
         if (tifPaths.Length == 0)
-            return;
+            return Array.Empty<double>();
 
         string outputFilePath = System.IO.Path.Combine(AutoanalysisFolder, outputFilename);
         if (overwrite == false && File.Exists(outputFilePath))
-            return;
+            return Array.Empty<double>();
 
         double[] values = new double[tifPaths.Length];
         for (int i = 0; i < tifPaths.Length; i++)
@@ -85,13 +83,15 @@ internal class TSeries : IExperiment
         }
 
         ScottPlot.Plot plt = new(600, 400);
-        plt.AddScatter(Scan.FrameTimes, values);
+        plt.AddScatter(Scan.FrameTimes, values, color);
         plt.SetAxisLimits(yMin: 0);
         plt.Title(System.IO.Path.GetFileName(Path));
         plt.YLabel("PMT Value (AFU)");
         plt.XLabel("Time (seconds)");
 
         plt.SaveFig(outputFilePath);
+
+        return values;
     }
 
     private double GetMean(double[,] data)
