@@ -40,7 +40,7 @@ internal class ReportBuilder
         Content.AppendLine(header);
     }
 
-    public void Add(TimelineItem item, bool open = false)
+    public void Add(TimelineItem item, bool open = true)
     {
         StringBuilder sb = new();
         string timestamp = string.Empty;
@@ -69,6 +69,7 @@ internal class ReportBuilder
             .Replace("{{TITLE}}", item.Title)
             .Replace("{{TIMESTAMP}}", timestamp)
             .Replace("{{CONTENT}}", sb.ToString())
+            .Replace("{{DETAILS_CLASS}}", item.Icon is TimelineIcon.Break ? "invisible" : "visible")
             .Replace("{{ICON}}", item.Icon.ToString().ToLower())
             .Replace("{{OPEN}}", open ? "open" : string.Empty);
 
