@@ -40,7 +40,7 @@ internal class ReportBuilder
         Content.AppendLine(header);
     }
 
-    public void Add(TimelineItem item, bool open = true)
+    public void Add(TimelineItem item, bool open = false)
     {
         StringBuilder sb = new();
         string timestamp = string.Empty;
@@ -96,9 +96,11 @@ internal class ReportBuilder
         Content.Append("</div>");
     }
 
-    public void AddExperimentNotes(string text)
+    public void AddExperimentNotes(string path)
     {
+        string notes = File.ReadAllText(path);
         Content.Append("<h3 class='mt-4'>Experiment Notes</h3>");
-        Content.Append($"<pre>{text}</pre>");
+        Content.Append($"<div><code>{path}</code></div>");
+        Content.Append($"<pre>{notes}</pre>");
     }
 }

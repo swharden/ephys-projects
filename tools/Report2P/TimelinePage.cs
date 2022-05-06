@@ -127,7 +127,7 @@ internal class TimelinePage
         if (File.Exists(experimentFilePath))
         {
             Log.Debug($"adding experiment notes");
-            report.AddExperimentNotes(File.ReadAllText(experimentFilePath));
+            report.AddExperimentNotes(experimentFilePath);
         }
         else
         {
