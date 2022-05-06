@@ -48,6 +48,19 @@
                 opacity: 1;
             }
     </style>
+
+    <script>
+        function expandAll() {
+            for (var element of document.getElementsByTagName("details"))
+                element.open = true;
+        }
+
+        function collapseAll() {
+            for (var element of document.getElementsByTagName("details"))
+                element.open = false;
+        }
+    </script>
+
 </head>
 
 <body style="background-color: #f5f6f7;">
