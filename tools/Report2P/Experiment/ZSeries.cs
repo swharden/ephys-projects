@@ -18,7 +18,6 @@ internal class ZSeries : IExperiment
     {
         Path = System.IO.Path.GetFullPath(folder);
         Scan = new PvXml.ScanTypes.ZSeries(folder);
-        ImageGroups.AddRange(GetImageGroups());
     }
 
     public ImageGroup[] GetImageGroups()
