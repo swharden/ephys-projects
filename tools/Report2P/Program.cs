@@ -1,12 +1,11 @@
-﻿using Report2P.Experiment;
-using Report2P.PvXml;
-
-namespace Report2P;
+﻿namespace Report2P;
 
 public static class Program
 {
     public static void Main()
     {
-        TimelinePage.MakeIndex(@"X:\Data\zProjects\Oxytocin Biosensor\experiments\bath apply OXT");
+        string folderPath = @"X:\Data\zProjects\Oxytocin Biosensor\experiments\bath apply OXT";
+        //Analysis.AnalyzeAllSubfolders(folderPath);
+        TimelinePage.MakeIndex(folderPath);
     }
 }

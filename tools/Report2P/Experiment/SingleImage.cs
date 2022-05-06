@@ -19,8 +19,14 @@ internal class SingleImage : IExperiment
     {
         Path = System.IO.Path.GetFullPath(folder);
         Scan = new PvXml.ScanTypes.SingleImage(folder);
+        ImageGroups.AddRange(GetImageGroups());
+    }
 
-        ImageGroups.Add(
+    public ImageGroup[] GetImageGroups()
+    {
+        List<ImageGroup> groups = new();
+
+        groups.Add(
             new ImageGroup()
             {
                 Title = "Images",
@@ -29,6 +35,8 @@ internal class SingleImage : IExperiment
                     .ToArray(),
             }
         );
+
+        return groups.ToArray();
     }
 
     public void Analyze(bool clear = false)

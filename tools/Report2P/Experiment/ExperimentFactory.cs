@@ -2,7 +2,7 @@
 
 internal static class ExperimentFactory
 {
-    public static IExperiment GetExperiment(string folder2p)
+    public static IExperiment? GetExperiment(string folder2p)
     {
         string folderName = Path.GetFileName(folder2p);
 
@@ -21,6 +21,6 @@ internal static class ExperimentFactory
         if (folderName.StartsWith("TSeries-"))
             return new TSeries(folder2p);
 
-        throw new NotImplementedException($"unsupported experiment folder: {folder2p}");
+        return null;
     }
 }

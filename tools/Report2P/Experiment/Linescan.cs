@@ -7,8 +7,6 @@ internal class Linescan : IExperiment
     public string Details => Scan.GetSummary();
     public DateTime DateTime => Scan.PVState.DateTime;
 
-    public List<ImageGroup> ImageGroups { get; private set; } = new();
-
     public string AutoanalysisFolder => System.IO.Path.Combine(Path, "autoanalysis");
 
     private string ReferencesFolder => System.IO.Path.Combine(Path, "References");
@@ -19,6 +17,43 @@ internal class Linescan : IExperiment
     {
         Path = System.IO.Path.GetFullPath(folder);
         Scan = new PvXml.ScanTypes.LineScan(folder);
+    }
+
+    public ImageGroup[] GetImageGroups()
+    {
+        List<ImageGroup> groups = new();
+
+        groups.Add(
+            new ImageGroup()
+            {
+                Title = "Reference Images",
+                Paths = Directory.GetFiles(AutoanalysisFolder, "ref_*.png")
+                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
+                    .ToArray(),
+            }
+        );
+
+        groups.Add(
+            new ImageGroup()
+            {
+                Title = "Linescan Images",
+                Paths = Directory.GetFiles(AutoanalysisFolder, "data_*.png")
+                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
+                    .ToArray(),
+            }
+        );
+
+        groups.Add(
+            new ImageGroup()
+            {
+                Title = "Linescan Analyses",
+                Paths = Directory.GetFiles(AutoanalysisFolder, "linescan_*.png")
+                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
+                    .ToArray(),
+            }
+        );
+
+        return groups.ToArray();
     }
 
     public void Analyze(bool clear = false)
@@ -32,36 +67,6 @@ internal class Linescan : IExperiment
         CreateReferenceImages();
         CreateDataImages();
         CreateAnalysisImages();
-
-        ImageGroups.Add(
-            new ImageGroup()
-            {
-                Title = "Reference Images",
-                Paths = Directory.GetFiles(AutoanalysisFolder, "ref_*.png")
-                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
-                    .ToArray(),
-            }
-        );
-
-        ImageGroups.Add(
-            new ImageGroup()
-            {
-                Title = "Linescan Images",
-                Paths = Directory.GetFiles(AutoanalysisFolder, "data_*.png")
-                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
-                    .ToArray(),
-            }
-        );
-
-        ImageGroups.Add(
-            new ImageGroup()
-            {
-                Title = "Linescan Analyses",
-                Paths = Directory.GetFiles(AutoanalysisFolder, "linescan_*.png")
-                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
-                    .ToArray(),
-            }
-        );
     }
 
     private void CreateAnalysisImages(bool overwrite = false)

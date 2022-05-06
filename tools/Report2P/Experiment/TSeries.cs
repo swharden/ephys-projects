@@ -7,8 +7,6 @@ internal class TSeries : IExperiment
     public string Details => Scan.GetSummary();
     public DateTime DateTime => Scan.PVState.DateTime;
 
-    public List<ImageGroup> ImageGroups { get; private set; } = new();
-
     public string AutoanalysisFolder => System.IO.Path.Combine(Path, "autoanalysis");
 
     private string ReferencesFolder => System.IO.Path.Combine(Path, "References");
@@ -21,6 +19,33 @@ internal class TSeries : IExperiment
         Scan = new PvXml.ScanTypes.TSeries(folder);
     }
 
+    public ImageGroup[] GetImageGroups()
+    {
+        List<ImageGroup> groups = new();
+
+        groups.Add(
+            new ImageGroup()
+            {
+                Title = "Intensity Plots",
+                Paths = Directory.GetFiles(AutoanalysisFolder, "intensity_*.png")
+                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
+                    .ToArray(),
+            }
+        );
+
+        groups.Add(
+            new ImageGroup()
+            {
+                Title = "Reference Images",
+                Paths = Directory.GetFiles(AutoanalysisFolder, "ref_*.png")
+                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
+                    .ToArray(),
+            }
+        );
+
+        return groups.ToArray();
+    }
+
     public void Analyze(bool clear = false)
     {
         if (clear && Directory.Exists(AutoanalysisFolder))
@@ -31,29 +56,9 @@ internal class TSeries : IExperiment
 
         CreateReferenceImages();
         CreateAnalysisImages();
-
-        ImageGroups.Add(
-            new ImageGroup()
-            {
-                Title = "Analyses",
-                Paths = Directory.GetFiles(AutoanalysisFolder, "intensity_*.png")
-                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
-                    .ToArray(),
-            }
-        );
-
-        ImageGroups.Add(
-            new ImageGroup()
-            {
-                Title = "Reference Images",
-                Paths = Directory.GetFiles(AutoanalysisFolder, "ref_*.png")
-                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
-                    .ToArray(),
-            }
-        );
     }
 
-    private void CreateAnalysisImages(bool overwrite = true)
+    private void CreateAnalysisImages(bool overwrite = false)
     {
         string[] tifPaths = Directory.GetFiles(Path, "*.ome.tif").ToArray();
         string[] tifPathsR = tifPaths.Where(x => x.Contains("_Ch1_")).ToArray();
@@ -68,6 +73,8 @@ internal class TSeries : IExperiment
 
     private double[] PlotIntensityOverTime(string[] tifPaths, string outputFilename, bool overwrite = false, System.Drawing.Color? color = null)
     {
+        Log.Debug($"Creating full field intensity plot of {tifPaths.Length} TIFs: {outputFilename}");
+
         if (tifPaths.Length == 0)
             return Array.Empty<double>();
 
@@ -94,7 +101,7 @@ internal class TSeries : IExperiment
         return values;
     }
 
-    private double GetMean(double[,] data)
+    private static double GetMean(double[,] data)
     {
         double mean = 0;
 
@@ -107,6 +114,8 @@ internal class TSeries : IExperiment
 
     private void ConvertTif(string tifPath, string prefix, bool overwrite = false)
     {
+        Log.Debug($"Converting TIF to PNG: {System.IO.Path.GetFileName(tifPath)}");
+
         string outputFileName = prefix + System.IO.Path.GetFileName(tifPath) + ".png";
         string outputFilePath = System.IO.Path.Combine(AutoanalysisFolder, outputFileName);
 
@@ -119,7 +128,10 @@ internal class TSeries : IExperiment
 
     private void CreateReferenceImages()
     {
-        string[] windowTifs = Directory.GetFiles(ReferencesFolder, "*Window*.tif").ToArray();
+        string[] windowTifs = Directory
+            .GetFiles(ReferencesFolder, "*.tif")
+            .Where(x => x.Contains("Window") || x.Contains("Reference"))
+            .ToArray();
 
         foreach (string tifPath in windowTifs)
         {

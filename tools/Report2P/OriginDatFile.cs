@@ -13,6 +13,8 @@ namespace Report2P
             if (xs.Length == 0)
                 return;
 
+            Log.Debug($"Creating 2-channel intensity data as origin compatible file: {Path.GetFileName(filePath)}");
+
             double fps = 1.0 / xs[1];
 
             StringBuilder sb = new();
@@ -27,7 +29,6 @@ namespace Report2P
             }
 
             File.WriteAllText(filePath, sb.ToString());
-            Console.WriteLine($"Wrote: {filePath}");
         }
     }
 }

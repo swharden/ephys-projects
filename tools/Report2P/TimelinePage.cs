@@ -11,20 +11,24 @@ internal class TimelinePage
 {
     public static void MakeIndex(string folderOf2pFolders)
     {
-        List<TimelineItem> timelineItems = new();
-        timelineItems.AddRange(GetTimelineItems2P(folderOf2pFolders));
-        timelineItems.AddRange(GetTimelineItemsAbf(folderOf2pFolders));
+        Log.Info($"Creating 2P Report HTML page for: {folderOf2pFolders}");
 
-        if (!timelineItems.Any())
+        TimelineItem[] items2p = GetTimelineItems2P(folderOf2pFolders);
+        Log.Debug($"2P timeline items: {items2p.Length}");
+
+        TimelineItem[] itemsABF = GetTimelineItemsAbf(folderOf2pFolders);
+        Log.Debug($"ABF timeline items: {items2p.Length}");
+        TimelineItem[] items = items2p.Concat(itemsABF).ToArray();
+
+        if (items.Length == 0)
             throw new InvalidOperationException("no timeline items found");
 
-        MakeIndexPage(folderOf2pFolders, timelineItems.ToArray());
+        MakeIndexPage(folderOf2pFolders, items);
     }
 
     private static TimelineItem[] GetTimelineItemsAbf(string folderOf2pFolders)
     {
         string abfFolder = Path.GetFullPath(Path.Combine(folderOf2pFolders, "../abfs"));
-        Console.WriteLine(abfFolder);
         if (!Directory.Exists(abfFolder))
             return Array.Empty<TimelineItem>();
 
@@ -32,7 +36,7 @@ internal class TimelinePage
 
         foreach (string abfPath in Directory.GetFiles(abfFolder, "*.abf").Where(x => x.EndsWith(".abf")))
         {
-            Console.WriteLine($"Analyzing: {abfPath}");
+            Log.Debug($"Analyzing ABF folder: {abfPath}");
             AbfSharp.ABFFIO.ABF abf = new(abfPath, preloadSweepData: false);
             DateTime abfDateTime = GetAbfDateTime(abf);
 
@@ -71,37 +75,30 @@ internal class TimelinePage
         return timelineItems.ToArray();
     }
 
+    private static TimelineItem? GetTimelineItem(string folder)
+    {
+        IExperiment? experiment = ExperimentFactory.GetExperiment(folder);
+
+        if (experiment is null)
+            return null;
+
+        return new TimelineItem()
+        {
+            Title = Path.GetFileName(experiment.Path),
+            Content = experiment.Details,
+            DateTime = experiment.DateTime,
+            Icon = GetExperimentIcon(experiment),
+            ImageGroups = experiment.GetImageGroups(),
+        };
+    }
+
     private static TimelineItem[] GetTimelineItems2P(string folderOf2pFolders)
     {
-        List<TimelineItem> timelineItems = new();
-
-        foreach (string folder in Directory.GetDirectories(folderOf2pFolders))
-        {
-            try
-            {
-                Console.WriteLine($"Scanning: {folder}");
-                IExperiment experiment = ExperimentFactory.GetExperiment(folder);
-                Console.WriteLine($"Analyzing: {experiment.Path}");
-                experiment.Analyze();
-
-                TimelineItem item = new()
-                {
-                    Title = Path.GetFileName(experiment.Path),
-                    Content = experiment.Details,
-                    DateTime = experiment.DateTime,
-                    Icon = GetExperimentIcon(experiment),
-                    ImageGroups = experiment.ImageGroups.ToArray(),
-                };
-
-                timelineItems.Add(item);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
-
-        return timelineItems.ToArray();
+        return Directory.GetDirectories(folderOf2pFolders)
+            .Select(x => GetTimelineItem(x))
+            .Where(x => x is not null)
+            .Cast<TimelineItem>()
+            .ToArray();
     }
 
     private static TimelineIcon GetExperimentIcon(IExperiment experiment)
@@ -129,7 +126,12 @@ internal class TimelinePage
         string experimentFilePath = Path.Combine(folderOf2pFolders, "experiment.txt");
         if (File.Exists(experimentFilePath))
         {
+            Log.Debug($"adding experiment notes");
             report.AddExperimentNotes(File.ReadAllText(experimentFilePath));
+        }
+        else
+        {
+            Log.Debug($"experiment notes file does not exist");
         }
 
         report.DivStart("my-5");
@@ -138,6 +140,7 @@ internal class TimelinePage
 
         foreach (TimelineItem item in sortedTimelineItems)
         {
+            Log.Debug($"generating HTML for timeline item: {item.Title}");
             if (item.DateTime - lastItemTime > TimeSpan.FromMinutes(10))
             {
                 report.Add(new TimelineItem() { Icon = TimelineIcon.Break });
@@ -152,7 +155,7 @@ internal class TimelinePage
 
         string outputFilePath = Path.Combine(folderOf2pFolders, "index.html");
         report.Save(outputFilePath);
-        Console.WriteLine(outputFilePath);
+        Log.Debug($"Saved: {outputFilePath}");
     }
 
     private static DateTime GetAbfDateTime(AbfSharp.ABFFIO.ABF abf)

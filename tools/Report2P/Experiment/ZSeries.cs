@@ -7,6 +7,7 @@ internal class ZSeries : IExperiment
     public string Details => Scan.GetSummary();
     public DateTime DateTime => Scan.PVState.DateTime;
 
+    // TODO: make this a method that scans at call time
     public List<ImageGroup> ImageGroups { get; private set; } = new();
 
     public string AutoanalysisFolder => System.IO.Path.Combine(Path, "autoanalysis");
@@ -17,19 +18,14 @@ internal class ZSeries : IExperiment
     {
         Path = System.IO.Path.GetFullPath(folder);
         Scan = new PvXml.ScanTypes.ZSeries(folder);
+        ImageGroups.AddRange(GetImageGroups());
     }
 
-    public void Analyze(bool clear = false)
+    public ImageGroup[] GetImageGroups()
     {
-        if (clear && Directory.Exists(AutoanalysisFolder))
-            Directory.Delete(AutoanalysisFolder, recursive: true);
+        List<ImageGroup> groups = new();
 
-        if (!Directory.Exists(AutoanalysisFolder))
-            Directory.CreateDirectory(AutoanalysisFolder);
-
-        CreateProjectionImages();
-
-        ImageGroups.Add(
+        groups.Add(
             new ImageGroup()
             {
                 Title = "Maximum Projections",
@@ -38,25 +34,46 @@ internal class ZSeries : IExperiment
                     .ToArray(),
             }
         );
+
+        return groups.ToArray();
     }
 
-    private void CreateProjectionImages()
+    public void Analyze(bool clear = false)
+    {
+        bool overwrite = true;
+
+        if (clear && Directory.Exists(AutoanalysisFolder))
+            Directory.Delete(AutoanalysisFolder, recursive: true);
+
+        if (!Directory.Exists(AutoanalysisFolder))
+            Directory.CreateDirectory(AutoanalysisFolder);
+
+        CreateProjectionImages(overwrite);
+        GetImageGroups();
+    }
+
+    private void CreateProjectionImages(bool overwrite)
     {
         string[] tifsCh1 = Directory.GetFiles(Path, "*.tif").Where(x => x.Contains("_Ch1_")).ToArray();
         string[] tifsCh2 = Directory.GetFiles(Path, "*.tif").Where(x => x.Contains("_Ch2_")).ToArray();
 
         if (tifsCh1.Any())
-            ProjectMax(tifsCh1, "proj_red.png");
+            ProjectMax(tifsCh1, "proj_red.png", overwrite);
 
         if (tifsCh2.Any())
-            ProjectMax(tifsCh2, "proj_green.png");
+            ProjectMax(tifsCh2, "proj_green.png", overwrite);
     }
 
-    private void ProjectMax(string[] tifs, string filename, bool overwrite = false)
+    private void ProjectMax(string[] tifs, string filename, bool overwrite)
     {
         string outputFilePath = System.IO.Path.Combine(AutoanalysisFolder, filename);
         if (overwrite == false && File.Exists(outputFilePath))
+        {
+            Log.Debug($"Projection image already exists: {System.IO.Path.GetFileName(outputFilePath)}");
             return;
+        }
+
+        Log.Debug($"Projecting {tifs.Length} TIFs: {System.IO.Path.GetFileName(outputFilePath)}");
 
         SciTIF.TifFile tifMax = new(tifs[0]);
 
