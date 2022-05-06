@@ -10,7 +10,7 @@ namespace Report2P
     {
         public static void Write(double[] xs, double[] red, double[] green, string filePath)
         {
-            if (xs.Length == 0)
+            if (xs.Length < 2)
                 return;
 
             Log.Debug($"Creating 2-channel intensity data as origin compatible file: {Path.GetFileName(filePath)}");
