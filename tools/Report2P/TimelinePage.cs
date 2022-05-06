@@ -123,15 +123,22 @@ internal class TimelinePage
         string templateFolder = "../../../Templates";
         ReportBuilder report = new(templateFolder, folderOf2pFolders);
 
-        string experimentFilePath = Path.Combine(folderOf2pFolders, "experiment.txt");
-        if (File.Exists(experimentFilePath))
+        string[] experimentFilePaths =
         {
-            Log.Debug($"adding experiment notes");
-            report.AddExperimentNotes(experimentFilePath);
-        }
-        else
-        {
+            Path.Combine(folderOf2pFolders, "experiment.txt"),
+            Path.Combine(Path.GetDirectoryName(folderOf2pFolders)!, "experiment.txt"),
+        };
+
+        if (experimentFilePaths.Length == 0)
             Log.Debug($"experiment notes file does not exist");
+
+        foreach (string path in experimentFilePaths)
+        {
+            if (File.Exists(path))
+            {
+                Log.Debug($"adding experiment notes: {path}");
+                report.AddExperimentNotes(path);
+            }
         }
 
         report.DivStart("my-5");
