@@ -11,7 +11,7 @@ internal class TimelinePage
 {
     public static void MakeIndex(string folderOf2pFolders)
     {
-        Log.Info($"Creating 2P Report HTML page for: {folderOf2pFolders}");
+        Log.Info($"\nCreating 2P Report HTML page for: {folderOf2pFolders}");
 
         TimelineItem[] items2p = GetTimelineItems2P(folderOf2pFolders);
         Log.Debug($"2P timeline items: {items2p.Length}");
