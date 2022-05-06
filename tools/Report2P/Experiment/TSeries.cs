@@ -122,6 +122,12 @@ internal class TSeries : IExperiment
         if (overwrite == false && File.Exists(outputFilePath))
             return;
 
+        if (new FileInfo(tifPath).Length > 5_000_000)
+        {
+            Log.Warn($"Skipping TIF that is >5 MB: {System.IO.Path.GetFileName(tifPath)}");
+            return;
+        }
+
         SciTIF.TifFile tif = new(tifPath);
         tif.SavePng(outputFilePath, autoScale: true);
     }
