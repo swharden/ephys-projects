@@ -48,6 +48,7 @@ internal class ReportBuilder
         if (item.DateTime != DateTime.MinValue)
         {
             timestamp = $"<div style='font-size: .8em;'>" +
+                $"<div>{DateOnly.FromDateTime(item.DateTime).ToShortDateString()}</div>" +
                 $"<div>{TimeOnly.FromDateTime(item.DateTime).ToLongTimeString()}</div>" +
                 $"<div>(+{item.ExperimentTime.Minutes}:{item.ExperimentTime.Seconds:00})</div>" +
                 $"</div>";
