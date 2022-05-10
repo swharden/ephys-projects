@@ -58,10 +58,18 @@ internal class ReportBuilder
 
             foreach (Experiment.ImageGroup grp in item.ImageGroups)
             {
-                sb.AppendLine($"<h3>{grp.Title}</h3>");
+                sb.AppendLine($"<h3 class='mt-4'>{grp.Title} ({grp.Paths.Length})</h3>");
+
                 foreach (string path in grp.Paths)
                 {
-                    sb.AppendLine($"<a href='{path}'><img src='{path}' height='300'></a>");
+                    if (path.EndsWith(".dat"))
+                    {
+                        sb.AppendLine($"<li><code>{path}</code></li>");
+                    }
+                    else
+                    {
+                        sb.AppendLine($"<a href='{path}'><img src='{path}' height='300'></a>");
+                    }
                 }
             }
         }

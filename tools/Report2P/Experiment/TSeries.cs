@@ -26,6 +26,15 @@ internal class TSeries : IExperiment
         groups.Add(
             new ImageGroup()
             {
+                Title = "OriginLab Files",
+                Paths = Directory.GetFiles(AutoanalysisFolder, "*.dat")
+                    .ToArray(),
+            }
+        );
+
+        groups.Add(
+            new ImageGroup()
+            {
                 Title = "Intensity Plots",
                 Paths = Directory.GetFiles(AutoanalysisFolder, "intensity_*.png")
                     .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
