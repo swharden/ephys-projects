@@ -9,13 +9,13 @@ namespace Report2P
 {
     internal class Analysis
     {
-        public static void AnalyzeAllSubfolders(string folderPath)
+        public static void AnalyzeAllSubfolders(string folderPath, bool overwrite)
         {
             foreach (string subfolder in Directory.GetDirectories(folderPath))
-                AnalyzeFolder(subfolder);
+                AnalyzeFolder(subfolder, overwrite);
         }
 
-        public static void AnalyzeFolder(string folder)
+        public static void AnalyzeFolder(string folder, bool overwrite)
         {
             Log.Info($"\nAnalyzing: {folder}");
             IExperiment? experiment = ExperimentFactory.GetExperiment(folder);
@@ -26,7 +26,7 @@ namespace Report2P
             else
             {
                 Log.Debug($"Analyzing folder as {experiment}");
-                experiment.Analyze();
+                experiment.Analyze(clear: overwrite);
             }
         }
     }
