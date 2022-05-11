@@ -7,5 +7,5 @@ internal class TimelineItem
     public string Title { get; init; } = string.Empty;
     public string Content { get; init; } = string.Empty;
     public TimelineIcon Icon { get; init; } = TimelineIcon.Line;
-    public Experiment.ImageGroup[] ImageGroups = Array.Empty<Experiment.ImageGroup>();
+    public Experiment.ResultsFiles[] ImageGroups = Array.Empty<Experiment.ResultsFiles>();
 }

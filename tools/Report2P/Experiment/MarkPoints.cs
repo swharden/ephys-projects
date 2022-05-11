@@ -7,7 +7,7 @@ internal class MarkPoints : IExperiment
     public string Details => "uncaging point shape analysis not implemented";
     public DateTime DateTime => Scan.DateTime;
 
-    public List<ImageGroup> ImageGroups { get; private set; } = new();
+    public List<ResultsFiles> ImageGroups { get; private set; } = new();
 
     public string AutoanalysisFolder => System.IO.Path.Combine(Path, "autoanalysis");
 
@@ -19,12 +19,12 @@ internal class MarkPoints : IExperiment
         Scan = new PvXml.ScanTypes.MarkPoints(folder);
     }
 
-    public ImageGroup[] GetImageGroups()
+    public ResultsFiles[] GetResultFiles()
     {
-        List<ImageGroup> groups = new();
+        List<ResultsFiles> groups = new();
 
         groups.Add(
-            new ImageGroup()
+            new ResultsFiles()
             {
                 Title = "Reference Images",
                 Paths = Directory.GetFiles(AutoanalysisFolder, "ref_*.png")

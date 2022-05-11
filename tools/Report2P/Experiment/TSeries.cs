@@ -19,40 +19,37 @@ internal class TSeries : IExperiment
         Scan = new PvXml.ScanTypes.TSeries(folder);
     }
 
-    public ImageGroup[] GetImageGroups()
+    public ResultsFiles[] GetResultFiles()
     {
-        List<ImageGroup> groups = new();
-
-        groups.Add(
-            new ImageGroup()
-            {
-                Title = "OriginLab Files",
-                Paths = Directory.GetFiles(AutoanalysisFolder, "*.dat")
+        ResultsFiles datFiles = new()
+        {
+            Title = "OriginLab Files",
+            Paths = Directory.GetFiles(AutoanalysisFolder, "*.dat")
                     .ToArray(),
-            }
-        );
+        };
 
-        groups.Add(
-            new ImageGroup()
-            {
-                Title = "Intensity Plots",
-                Paths = Directory.GetFiles(AutoanalysisFolder, "intensity_*.png")
-                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
-                    .ToArray(),
-            }
-        );
+        ResultsFiles plotImages = new()
+        {
+            Title = "Intensity Plots",
+            Paths = Directory.GetFiles(AutoanalysisFolder, "intensity_*.png")
+                .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
+                .ToArray(),
+        };
 
-        groups.Add(
-            new ImageGroup()
-            {
-                Title = "Reference Images",
-                Paths = Directory.GetFiles(AutoanalysisFolder, "ref_*.png")
-                    .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
-                    .ToArray(),
-            }
-        );
+        ResultsFiles referenceImages = new()
+        {
+            Title = "Reference Images",
+            Paths = Directory.GetFiles(AutoanalysisFolder, "ref_*.png")
+                .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
+                .ToArray(),
+        };
 
-        return groups.ToArray();
+        return new ResultsFiles[]
+        {
+            datFiles,
+            plotImages,
+            referenceImages,
+        };
     }
 
     public void Analyze(bool clear = false)

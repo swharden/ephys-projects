@@ -60,13 +60,13 @@ internal class TimelinePage
                     .Select(x => x.Replace("\\", "/"))
                     .ToArray();
 
-                ImageGroup images = new()
+                ResultsFiles images = new()
                 {
                     Title = "ABF Analyses",
                     Paths = urls,
                 };
 
-                abfItem.ImageGroups = new ImageGroup[] { images };
+                abfItem.ImageGroups = new ResultsFiles[] { images };
             }
 
             timelineItems.Add(abfItem);
@@ -88,7 +88,7 @@ internal class TimelinePage
             Content = experiment.Details,
             DateTime = experiment.DateTime,
             Icon = GetExperimentIcon(experiment),
-            ImageGroups = experiment.GetImageGroups(),
+            ImageGroups = experiment.GetResultFiles(),
         };
     }
 

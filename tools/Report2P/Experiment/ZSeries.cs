@@ -8,7 +8,7 @@ internal class ZSeries : IExperiment
     public DateTime DateTime => Scan.PVState.DateTime;
 
     // TODO: make this a method that scans at call time
-    public List<ImageGroup> ImageGroups { get; private set; } = new();
+    public List<ResultsFiles> ImageGroups { get; private set; } = new();
 
     public string AutoanalysisFolder => System.IO.Path.Combine(Path, "autoanalysis");
 
@@ -20,12 +20,12 @@ internal class ZSeries : IExperiment
         Scan = new PvXml.ScanTypes.ZSeries(folder);
     }
 
-    public ImageGroup[] GetImageGroups()
+    public ResultsFiles[] GetResultFiles()
     {
-        List<ImageGroup> groups = new();
+        List<ResultsFiles> groups = new();
 
         groups.Add(
-            new ImageGroup()
+            new ResultsFiles()
             {
                 Title = "Maximum Projections",
                 Paths = Directory.GetFiles(AutoanalysisFolder, "proj_*.png")
@@ -48,7 +48,7 @@ internal class ZSeries : IExperiment
             Directory.CreateDirectory(AutoanalysisFolder);
 
         CreateProjectionImages(overwrite);
-        GetImageGroups();
+        GetResultFiles();
     }
 
     private void CreateProjectionImages(bool overwrite)

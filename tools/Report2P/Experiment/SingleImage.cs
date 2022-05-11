@@ -19,12 +19,12 @@ internal class SingleImage : IExperiment
         Scan = new PvXml.ScanTypes.SingleImage(folder);
     }
 
-    public ImageGroup[] GetImageGroups()
+    public ResultsFiles[] GetResultFiles()
     {
-        List<ImageGroup> groups = new();
+        List<ResultsFiles> groups = new();
 
         groups.Add(
-            new ImageGroup()
+            new ResultsFiles()
             {
                 Title = "Images",
                 Paths = Directory.GetFiles(AutoanalysisFolder, "*.png")

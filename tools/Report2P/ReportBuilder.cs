@@ -56,7 +56,7 @@ internal class ReportBuilder
             sb.AppendLine($"<h3>PrairieView Configuration</h3>");
             sb.AppendLine($"<pre style='white-space: pre-wrap; overflow-x: scroll;'>{item.Content}</pre>");
 
-            foreach (Experiment.ImageGroup grp in item.ImageGroups)
+            foreach (Experiment.ResultsFiles grp in item.ImageGroups)
             {
                 sb.AppendLine($"<h3 class='mt-4'>{grp.Title} ({grp.Paths.Length})</h3>");
 

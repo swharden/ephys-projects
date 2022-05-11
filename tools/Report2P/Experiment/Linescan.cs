@@ -19,12 +19,12 @@ internal class Linescan : IExperiment
         Scan = new PvXml.ScanTypes.LineScan(folder);
     }
 
-    public ImageGroup[] GetImageGroups()
+    public ResultsFiles[] GetResultFiles()
     {
-        List<ImageGroup> groups = new();
+        List<ResultsFiles> groups = new();
 
         groups.Add(
-            new ImageGroup()
+            new ResultsFiles()
             {
                 Title = "Reference Images",
                 Paths = Directory.GetFiles(AutoanalysisFolder, "ref_*.png")
@@ -34,7 +34,7 @@ internal class Linescan : IExperiment
         );
 
         groups.Add(
-            new ImageGroup()
+            new ResultsFiles()
             {
                 Title = "Linescan Images",
                 Paths = Directory.GetFiles(AutoanalysisFolder, "data_*.png")
@@ -44,7 +44,7 @@ internal class Linescan : IExperiment
         );
 
         groups.Add(
-            new ImageGroup()
+            new ResultsFiles()
             {
                 Title = "Linescan Analyses",
                 Paths = Directory.GetFiles(AutoanalysisFolder, "linescan_*.png")
