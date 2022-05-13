@@ -30,7 +30,12 @@ internal class ReportBuilder
         TemplateTimelineItem = File.ReadAllText(Path.Combine(templateFolder, "timeline-item-details.html"));
 
         string parentFolderName = Path.GetFileName(Path.GetDirectoryName(folder2p)) ?? string.Empty;
-        Title = $"2P Report: {System.IO.Path.GetFileName(folder2p)}";
+
+        string thisFolderTitle = Path.GetFileName(folder2p);
+        string parentFolderTitle = Path.GetFileName(Path.GetDirectoryName(folder2p)) ?? string.Empty;
+        string pageTitle = thisFolderTitle == "2p" ? parentFolderTitle : thisFolderTitle;
+
+        Title = $"2P Report: {pageTitle}";
         string header = File.ReadAllText(Path.Combine(templateFolder, "header.html"))
             .Replace("{{TITLE}}", Title)
             .Replace("{{SUBTITLE}}", folder2p)
