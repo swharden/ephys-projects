@@ -39,7 +39,7 @@ internal class ZSeries : IExperiment
 
     public void Analyze(bool clear = false)
     {
-        bool overwrite = true;
+        bool overwrite = clear;
 
         if (clear && Directory.Exists(AutoanalysisFolder))
             Directory.Delete(AutoanalysisFolder, recursive: true);
