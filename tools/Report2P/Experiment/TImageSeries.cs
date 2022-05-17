@@ -76,7 +76,7 @@ internal class TImageSeries : IExperiment
         string datFilePath = System.IO.Path.Combine(AutoanalysisFolder, "intensity.dat");
         if (File.Exists(datFilePath) && overwrite == false)
             return;
-        OriginDatFile.Write(Scan.FrameTimes, redValues, greenValues, datFilePath);
+        OriginDatFile.SaveXRG(Scan.FrameTimes, redValues, greenValues, datFilePath);
     }
 
     private double[] PlotIntensityOverTime(string[] tifPaths, string outputFilename, bool overwrite = false, System.Drawing.Color? color = null)

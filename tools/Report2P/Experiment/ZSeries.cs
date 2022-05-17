@@ -118,7 +118,7 @@ internal class ZSeries : IExperiment
             return;
 
         double[] frameNumbers = Enumerable.Range(1, Scan.FrameCount).Select(x => (double)x).ToArray();
-        OriginDatFile.Write(frameNumbers, redValues, greenValues, datFilePath, xUnit: "frame");
+        OriginDatFile.SaveXRG(frameNumbers, redValues, greenValues, datFilePath, xUnit: "frame");
     }
 
     private double[] PlotIntensityByFrame(string[] tifPaths, string outputFilename, bool overwrite = false, System.Drawing.Color? color = null)

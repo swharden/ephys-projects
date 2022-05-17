@@ -26,11 +26,12 @@ public static class Program
 
     private static void DevAnalyzeFolders()
     {
-        // force reanalysis of a single 2P folder
         /*
+        // force reanalysis of a single 2P folder
         Analysis.AnalyzeFolder(
-            folder: @"X:\Data\zProjects\Oxytocin Biosensor\experiments\patch clamp stimulation\2p\ZSeries-05132022-1311-1552",
+            folder: @"X:\Data\C57\Sigma-1R\tagged-S1R\2022-05-16-METH-20uM\TSeries-05162022-1314-1955",
             overwrite: true);
+        return;
         */
 
         string[] folderPaths =
@@ -45,7 +46,7 @@ public static class Program
 
         foreach (string folderPath in folderPaths)
         {
-            Analysis.AnalyzeAllSubfolders(folderPath, overwrite: false);
+            Analysis.AnalyzeAllSubfolders(folderPath, overwrite: true);
             TimelinePage.MakeIndex(folderPath);
         }
     }
