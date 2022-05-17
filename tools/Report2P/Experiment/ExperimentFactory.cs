@@ -4,22 +4,28 @@ internal static class ExperimentFactory
 {
     public static IExperiment? GetExperiment(string folder2p)
     {
-        string folderName = Path.GetFileName(folder2p);
+        PvXml.IScan? scan = PvXml.ScanFactory.FromPVFolder(folder2p);
 
-        if (folderName.StartsWith("LineScan-"))
+        if (scan is null)
+            return null;
+
+        if (scan is PvXml.ScanTypes.LineScan)
             return new Linescan(folder2p);
 
-        if (folderName.StartsWith("SingleImage-"))
+        if (scan is PvXml.ScanTypes.SingleImage)
             return new SingleImage(folder2p);
 
-        if (folderName.StartsWith("MarkPoints-"))
+        if (scan is PvXml.ScanTypes.MarkPoints)
             return new MarkPoints(folder2p);
 
-        if (folderName.StartsWith("ZSeries-"))
+        if (scan is PvXml.ScanTypes.ZSeries)
             return new ZSeries(folder2p);
 
-        if (folderName.StartsWith("TSeries-"))
-            return new TSeries(folder2p);
+        if (scan is PvXml.ScanTypes.TSeries)
+            return new TImageSeries(folder2p);
+
+        if (scan is PvXml.ScanTypes.TZSeries)
+            return new TStackSeries(folder2p);
 
         return null;
     }

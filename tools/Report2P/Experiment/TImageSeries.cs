@@ -1,6 +1,6 @@
 ﻿namespace Report2P.Experiment;
 
-internal class ZSeries : IExperiment
+internal class TImageSeries : IExperiment
 {
     public string Path { get; private set; }
 
@@ -9,12 +9,14 @@ internal class ZSeries : IExperiment
 
     public string AutoanalysisFolder => System.IO.Path.Combine(Path, "autoanalysis");
 
-    private readonly PvXml.ScanTypes.ZSeries Scan;
+    private string ReferencesFolder => System.IO.Path.Combine(Path, "References");
 
-    public ZSeries(string folder)
+    private readonly PvXml.ScanTypes.TSeries Scan;
+
+    public TImageSeries(string folder)
     {
         Path = System.IO.Path.GetFullPath(folder);
-        Scan = new PvXml.ScanTypes.ZSeries(folder);
+        Scan = new PvXml.ScanTypes.TSeries(folder);
     }
 
     public ResultsFiles[] GetResultFiles()
@@ -34,74 +36,32 @@ internal class ZSeries : IExperiment
                 .ToArray(),
         };
 
-        ResultsFiles maxProjections = new()
+        ResultsFiles referenceImages = new()
         {
-            Title = "Maximum Projections",
-            Paths = Directory.GetFiles(AutoanalysisFolder, "proj_*.png")
+            Title = "Reference Images",
+            Paths = Directory.GetFiles(AutoanalysisFolder, "ref_*.png")
                 .Select(x => System.IO.Path.GetFileName(Path) + "/autoanalysis/" + System.IO.Path.GetFileName(x))
                 .ToArray(),
         };
 
-        return new ResultsFiles[] {
+        return new ResultsFiles[]
+        {
             datFiles,
             plotImages,
-            maxProjections,
+            referenceImages,
         };
     }
 
     public void Analyze(bool clear = false)
     {
-        bool overwrite = clear;
-
         if (clear && Directory.Exists(AutoanalysisFolder))
             Directory.Delete(AutoanalysisFolder, recursive: true);
 
         if (!Directory.Exists(AutoanalysisFolder))
             Directory.CreateDirectory(AutoanalysisFolder);
 
-        CreateProjectionImages(overwrite);
-        CreateAnalysisImages(overwrite);
-        GetResultFiles();
-    }
-
-    private void CreateProjectionImages(bool overwrite)
-    {
-        string[] tifsCh1 = Directory.GetFiles(Path, "*.tif").Where(x => x.Contains("_Ch1_")).ToArray();
-        string[] tifsCh2 = Directory.GetFiles(Path, "*.tif").Where(x => x.Contains("_Ch2_")).ToArray();
-
-        if (tifsCh1.Any())
-            ProjectMax(tifsCh1, "proj_red.png", overwrite);
-
-        if (tifsCh2.Any())
-            ProjectMax(tifsCh2, "proj_green.png", overwrite);
-    }
-
-    private void ProjectMax(string[] tifs, string filename, bool overwrite)
-    {
-        string outputFilePath = System.IO.Path.Combine(AutoanalysisFolder, filename);
-        if (overwrite == false && File.Exists(outputFilePath))
-        {
-            Log.Debug($"Projection image already exists: {System.IO.Path.GetFileName(outputFilePath)}");
-            return;
-        }
-
-        Log.Debug($"Projecting {tifs.Length} TIFs: {System.IO.Path.GetFileName(outputFilePath)}");
-
-        SciTIF.TifFile tifMax = new(tifs[0]);
-
-        for (int i = 1; i < tifs.Length; i++)
-        {
-            SciTIF.TifFile tif = new(tifs[i]);
-            for (int y = 0; y < tif.Height; y++)
-            {
-                for (int x = 0; x < tif.Width; x++)
-                {
-                    tifMax.Channels[0].Values[y, x] += tif.Channels[0].Values[y, x];
-                }
-            }
-        }
-
-        tifMax.SavePng(outputFilePath, autoScale: true);
+        CreateReferenceImages();
+        CreateAnalysisImages();
     }
 
     private void CreateAnalysisImages(bool overwrite = false)
@@ -110,18 +70,16 @@ internal class ZSeries : IExperiment
         string[] tifPathsR = tifPaths.Where(x => x.Contains("_Ch1_")).ToArray();
         string[] tifPathsG = tifPaths.Where(x => x.Contains("_Ch2_")).ToArray();
 
-        double[] redValues = PlotIntensityByFrame(tifPathsR, "intensity_red.png", overwrite, System.Drawing.Color.Red);
-        double[] greenValues = PlotIntensityByFrame(tifPathsG, "intensity_green.png", overwrite, System.Drawing.Color.Green);
+        double[] redValues = PlotIntensityOverTime(tifPathsR, "intensity_red.png", overwrite, System.Drawing.Color.Red);
+        double[] greenValues = PlotIntensityOverTime(tifPathsG, "intensity_green.png", overwrite, System.Drawing.Color.Green);
 
         string datFilePath = System.IO.Path.Combine(AutoanalysisFolder, "intensity.dat");
         if (File.Exists(datFilePath) && overwrite == false)
             return;
-
-        double[] frameNumbers = Enumerable.Range(1, Scan.FrameCount).Select(x => (double)x).ToArray();
-        OriginDatFile.Write(frameNumbers, redValues, greenValues, datFilePath, xUnit: "frame");
+        OriginDatFile.Write(Scan.FrameTimes, redValues, greenValues, datFilePath);
     }
 
-    private double[] PlotIntensityByFrame(string[] tifPaths, string outputFilename, bool overwrite = false, System.Drawing.Color? color = null)
+    private double[] PlotIntensityOverTime(string[] tifPaths, string outputFilename, bool overwrite = false, System.Drawing.Color? color = null)
     {
         Log.Debug($"Creating full field intensity plot of {tifPaths.Length} TIFs: {outputFilename}");
 
@@ -139,14 +97,12 @@ internal class ZSeries : IExperiment
             values[i] = GetMean(tif.Channels[0].Values);
         }
 
-        double[] frameNumbers = Enumerable.Range(1, Scan.FrameCount).Select(x => (double)x).ToArray(); ;
-
         ScottPlot.Plot plt = new(600, 400);
-        plt.AddScatter(frameNumbers, values, color);
+        plt.AddScatter(Scan.FrameTimes, values, color);
         plt.SetAxisLimits(yMin: 0);
         plt.Title(System.IO.Path.GetFileName(Path));
         plt.YLabel("PMT Value (AFU)");
-        plt.XLabel("Frame (#)");
+        plt.XLabel("Time (seconds)");
 
         plt.SaveFig(outputFilePath);
 
@@ -162,5 +118,38 @@ internal class ZSeries : IExperiment
                 mean += data[y, x];
 
         return mean / data.GetLength(0) / data.GetLength(1);
+    }
+
+    private void ConvertTif(string tifPath, string prefix, bool overwrite = false)
+    {
+        Log.Debug($"Converting TIF to PNG: {System.IO.Path.GetFileName(tifPath)}");
+
+        string outputFileName = prefix + System.IO.Path.GetFileName(tifPath) + ".png";
+        string outputFilePath = System.IO.Path.Combine(AutoanalysisFolder, outputFileName);
+
+        if (overwrite == false && File.Exists(outputFilePath))
+            return;
+
+        if (new FileInfo(tifPath).Length > 5_000_000)
+        {
+            Log.Warn($"Skipping TIF that is >5 MB: {System.IO.Path.GetFileName(tifPath)}");
+            return;
+        }
+
+        SciTIF.TifFile tif = new(tifPath);
+        tif.SavePng(outputFilePath, autoScale: true);
+    }
+
+    private void CreateReferenceImages()
+    {
+        string[] windowTifs = Directory
+            .GetFiles(ReferencesFolder, "*.tif")
+            .Where(x => x.Contains("Window") || x.Contains("Reference"))
+            .ToArray();
+
+        foreach (string tifPath in windowTifs)
+        {
+            ConvertTif(tifPath, "ref_");
+        }
     }
 }

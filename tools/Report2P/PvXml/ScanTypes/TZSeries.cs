@@ -41,7 +41,7 @@ public class TZSeries : IScan
 
         string expectedSequenceType = "TSeries ZSeries Element";
         var sequenceElement = sequenceElements.First();
-        if (sequenceElement.Attribute("type").Value != expectedSequenceType)
+        if (sequenceElement.Attribute("type")?.Value != expectedSequenceType)
             throw new InvalidOperationException($"Expected series of type: {expectedSequenceType}");
     }
 

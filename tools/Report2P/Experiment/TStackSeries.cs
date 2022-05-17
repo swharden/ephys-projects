@@ -1,6 +1,6 @@
 ﻿namespace Report2P.Experiment;
 
-internal class TSeries : IExperiment
+internal class TStackSeries : IExperiment
 {
     public string Path { get; private set; }
 
@@ -11,12 +11,12 @@ internal class TSeries : IExperiment
 
     private string ReferencesFolder => System.IO.Path.Combine(Path, "References");
 
-    private readonly PvXml.ScanTypes.TSeries Scan;
+    private readonly PvXml.ScanTypes.TZSeries Scan;
 
-    public TSeries(string folder)
+    public TStackSeries(string folder)
     {
         Path = System.IO.Path.GetFullPath(folder);
-        Scan = new PvXml.ScanTypes.TSeries(folder);
+        Scan = new PvXml.ScanTypes.TZSeries(folder);
     }
 
     public ResultsFiles[] GetResultFiles()
@@ -66,58 +66,6 @@ internal class TSeries : IExperiment
 
     private void CreateAnalysisImages(bool overwrite = false)
     {
-        string[] tifPaths = Directory.GetFiles(Path, "*.ome.tif").ToArray();
-        string[] tifPathsR = tifPaths.Where(x => x.Contains("_Ch1_")).ToArray();
-        string[] tifPathsG = tifPaths.Where(x => x.Contains("_Ch2_")).ToArray();
-
-        double[] redValues = PlotIntensityOverTime(tifPathsR, "intensity_red.png", overwrite, System.Drawing.Color.Red);
-        double[] greenValues = PlotIntensityOverTime(tifPathsG, "intensity_green.png", overwrite, System.Drawing.Color.Green);
-
-        string datFilePath = System.IO.Path.Combine(AutoanalysisFolder, "intensity.dat");
-        if (File.Exists(datFilePath) && overwrite == false)
-            return;
-        OriginDatFile.Write(Scan.FrameTimes, redValues, greenValues, datFilePath);
-    }
-
-    private double[] PlotIntensityOverTime(string[] tifPaths, string outputFilename, bool overwrite = false, System.Drawing.Color? color = null)
-    {
-        Log.Debug($"Creating full field intensity plot of {tifPaths.Length} TIFs: {outputFilename}");
-
-        if (tifPaths.Length == 0)
-            return Array.Empty<double>();
-
-        string outputFilePath = System.IO.Path.Combine(AutoanalysisFolder, outputFilename);
-        if (overwrite == false && File.Exists(outputFilePath))
-            return Array.Empty<double>();
-
-        double[] values = new double[tifPaths.Length];
-        for (int i = 0; i < tifPaths.Length; i++)
-        {
-            SciTIF.TifFile tif = new(tifPaths[i]);
-            values[i] = GetMean(tif.Channels[0].Values);
-        }
-
-        ScottPlot.Plot plt = new(600, 400);
-        plt.AddScatter(Scan.FrameTimes, values, color);
-        plt.SetAxisLimits(yMin: 0);
-        plt.Title(System.IO.Path.GetFileName(Path));
-        plt.YLabel("PMT Value (AFU)");
-        plt.XLabel("Time (seconds)");
-
-        plt.SaveFig(outputFilePath);
-
-        return values;
-    }
-
-    private static double GetMean(double[,] data)
-    {
-        double mean = 0;
-
-        for (int y = 0; y < data.GetLength(0); y++)
-            for (int x = 0; x < data.GetLength(1); x++)
-                mean += data[y, x];
-
-        return mean / data.GetLength(0) / data.GetLength(1);
     }
 
     private void ConvertTif(string tifPath, string prefix, bool overwrite = false)

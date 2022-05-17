@@ -8,7 +8,7 @@ namespace Report2P
 {
     public static class OriginDatFile
     {
-        public static void Write(double[] xs, double[] red, double[] green, string filePath)
+        public static void Write(double[] xs, double[] red, double[] green, string filePath, string xUnit = "sec")
         {
             if (xs.Length < 2)
                 return;
@@ -19,8 +19,8 @@ namespace Report2P
 
             StringBuilder sb = new();
             sb.AppendLine("Time\tRed\tGreen");
-            sb.AppendLine("sec\tAFU\tAFU");
-            sb.AppendLine($"{fps:N3} FPS\timage mean\timage mean");
+            sb.AppendLine($"{xUnit}\tAFU\tAFU");
+            sb.AppendLine($"X\timage mean\timage mean");
             for (int i = 0; i < xs.Length; i++)
             {
                 double r = i < red.Length ? red[i] : 0;

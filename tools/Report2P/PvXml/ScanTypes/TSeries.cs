@@ -22,7 +22,7 @@ public class TSeries : IScan
         PVState = new PVState(path);
         XDocument xmlDoc = PVState.XmlDoc;
         AssertValidScan(xmlDoc);
-        FrameTimes = GetFrameTimes(xmlDoc);
+        FrameTimes = GetSequenceTimes(xmlDoc);
         (Width, Height) = GetDimensions(xmlDoc);
     }
 
@@ -36,26 +36,26 @@ public class TSeries : IScan
         return sb.ToString();
     }
 
-    private void AssertValidScan(XDocument xmlDoc)
+    private static void AssertValidScan(XDocument xmlDoc)
     {
         var sequenceElements = xmlDoc.XPathSelectElements("/PVScan/Sequence");
-        if (sequenceElements.Count() != 1)
-            throw new InvalidOperationException($"expected just 1 sequence: {PVState.XmlFilePath}");
+        if (sequenceElements.Count() == 1)
+            throw new InvalidOperationException("expected a single Sequence");
 
         string expectedSequenceType = "TSeries Timed Element";
         var sequenceElement = sequenceElements.First();
-        if (sequenceElement.Attribute("type").Value != expectedSequenceType)
+        if (sequenceElement.Attribute("type")?.Value != expectedSequenceType)
             throw new InvalidOperationException($"Expected series of type: {expectedSequenceType}");
     }
 
-    public static double[] GetFrameTimes(XDocument xmlDoc)
+    public static double[] GetSequenceTimes(XDocument xmlDoc)
     {
         return xmlDoc
            .XPathSelectElements("/PVScan/Sequence")
            .First()
            .Elements("Frame")
-           .Select(x => x.Attribute("relativeTime").Value)
-           .Select(x => double.Parse(x))
+           .Select(x => x.Attribute("relativeTime")?.Value)
+           .Select(x => double.Parse(x!))
            .ToArray();
     }
 

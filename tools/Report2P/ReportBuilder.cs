@@ -29,8 +29,6 @@ internal class ReportBuilder
         TemplateBase = File.ReadAllText(Path.Combine(templateFolder, "base.html"));
         TemplateTimelineItem = File.ReadAllText(Path.Combine(templateFolder, "timeline-item-details.html"));
 
-        string parentFolderName = Path.GetFileName(Path.GetDirectoryName(folder2p)) ?? string.Empty;
-
         string thisFolderTitle = Path.GetFileName(folder2p);
         string parentFolderTitle = Path.GetFileName(Path.GetDirectoryName(folder2p)) ?? string.Empty;
         string pageTitle = thisFolderTitle == "2p" ? parentFolderTitle : thisFolderTitle;

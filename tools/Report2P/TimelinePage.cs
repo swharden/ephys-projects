@@ -108,7 +108,7 @@ internal class TimelinePage
             Linescan => TimelineIcon.Linescan,
             MarkPoints => TimelineIcon.MarkPoints,
             SingleImage => TimelineIcon.SingleImage,
-            TSeries => TimelineIcon.TSeries,
+            TImageSeries => TimelineIcon.TSeries,
             ZSeries => TimelineIcon.ZSeries,
             _ => TimelineIcon.Line,
         };

@@ -6,7 +6,7 @@ public static class Program
     {
         if (System.Diagnostics.Debugger.IsAttached)
         {
-            DeveloperAnalysis();
+            DevAnalyzeFolders();
             return;
         }
         else if (args.Length == 1)
@@ -24,17 +24,23 @@ public static class Program
         _ = Console.ReadLine();
     }
 
-    private static void DeveloperAnalysis()
+    private static void DevAnalyzeFolders()
     {
         // force reanalysis of a single 2P folder
-        //Analysis.AnalyzeFolder(@"X:\Data\zProjects\Oxytocin Biosensor\experiments\bath apply OXT\TSeries-05102022-1208-1948", overwrite: true);
+        /*
+        Analysis.AnalyzeFolder(
+            folder: @"X:\Data\zProjects\Oxytocin Biosensor\experiments\patch clamp stimulation\2p\ZSeries-05132022-1311-1552",
+            overwrite: true);
+        */
 
         string[] folderPaths =
         {
             //@"X:\Data\zProjects\Oxytocin Biosensor\experiments\bath apply OXT",
             //@"X:\Data\zProjects\Oxytocin Biosensor\experiments\electrical stimulation\2p",
-            @"X:\Data\zProjects\Oxytocin Biosensor\experiments\patch clamp stimulation\2p",
-            @"X:\Data\zProjects\Oxytocin Biosensor\experiments\ChR2 stimulation\2p",
+            //@"X:\Data\zProjects\Oxytocin Biosensor\experiments\patch clamp stimulation\2p",
+            //@"X:\Data\zProjects\Oxytocin Biosensor\experiments\ChR2 stimulation\2p",
+            //@"X:\Data\zProjects\Oxytocin Biosensor\experiments\raise bath potassium",
+            @"X:\Data\C57\Sigma-1R\tagged-S1R\2022-05-16-METH-20uM",
         };
 
         foreach (string folderPath in folderPaths)
