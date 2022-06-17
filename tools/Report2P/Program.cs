@@ -6,7 +6,7 @@ public static class Program
     {
         if (System.Diagnostics.Debugger.IsAttached)
         {
-            DevAnalyzeFolders();
+            DeveloperMain();
             return;
         }
         else if (args.Length == 1)
@@ -24,30 +24,33 @@ public static class Program
         _ = Console.ReadLine();
     }
 
-    private static void DevAnalyzeFolders()
+    /// <summary>
+    /// This method is called when the program starts on a developer computer (where debugger is attached)
+    /// </summary>
+    static void DeveloperMain()
     {
-        /*
-        // force reanalysis of a single 2P folder
-        Analysis.AnalyzeFolder(
-            folder: @"X:\Data\C57\Sigma-1R\tagged-S1R\2022-05-16-METH-20uM\TSeries-05162022-1314-1955",
-            overwrite: true);
-        return;
-        */
+        //AnalyzeAndIndexEverySubfolder(@"X:\Data\C57\Sigma-1R\tagged-S1R", true);
+        AnalyzeAndIndex(@"X:\Data\C57\Sigma-1R\tagged-S1R\2022-06-16-METH-20uM", true);
+    }
 
-        string[] folderPaths =
+    /// <summary>
+    /// Analyze a folder where every subfolder contains multiple experiment folders
+    /// </summary>
+    private static void AnalyzeAndIndexEverySubfolder(string folder, bool overwrite)
+    {
+        foreach (string subFolder in Directory.GetDirectories(folder))
         {
-            //@"X:\Data\zProjects\Oxytocin Biosensor\experiments\bath apply OXT",
-            //@"X:\Data\zProjects\Oxytocin Biosensor\experiments\electrical stimulation\2p",
-            //@"X:\Data\zProjects\Oxytocin Biosensor\experiments\patch clamp stimulation\2p",
-            //@"X:\Data\zProjects\Oxytocin Biosensor\experiments\ChR2 stimulation\2p",
-            //@"X:\Data\zProjects\Oxytocin Biosensor\experiments\raise bath potassium",
-            @"X:\Data\C57\Sigma-1R\tagged-S1R\2022-05-16-METH-20uM",
-        };
-
-        foreach (string folderPath in folderPaths)
-        {
-            Analysis.AnalyzeAllSubfolders(folderPath, overwrite: true);
-            TimelinePage.MakeIndex(folderPath);
+            AnalyzeAndIndex(subFolder, overwrite);
         }
+    }
+
+    /// <summary>
+    /// Given a folder containing many 2P experiment folders,
+    /// analyze all 2P experiments and generate an index.html
+    /// </summary>
+    private static void AnalyzeAndIndex(string folder, bool overwrite)
+    {
+        Analysis.AnalyzeAllSubfolders(folder, overwrite);
+        TimelinePage.MakeIndex(folder);
     }
 }
