@@ -39,7 +39,7 @@ public class TSeries : IScan
     private static void AssertValidScan(XDocument xmlDoc)
     {
         var sequenceElements = xmlDoc.XPathSelectElements("/PVScan/Sequence");
-        if (sequenceElements.Count() == 1)
+        if (sequenceElements.Count() != 1)
             throw new InvalidOperationException("expected a single Sequence");
 
         string expectedSequenceType = "TSeries Timed Element";
