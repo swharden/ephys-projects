@@ -21,9 +21,13 @@ internal class TimelinePage
         TimelineItem[] items = items2p.Concat(itemsABF).ToArray();
 
         if (items.Length == 0)
-            throw new InvalidOperationException("no timeline items found");
-
-        MakeIndexPage(folderOf2pFolders, items);
+        {
+            Log.Warn($"no timeline items found in: {folderOf2pFolders}");
+        }
+        else
+        {
+            MakeIndexPage(folderOf2pFolders, items);
+        }
     }
 
     private static TimelineItem[] GetTimelineItemsAbf(string folderOf2pFolders)
