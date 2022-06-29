@@ -124,7 +124,7 @@ internal class TimelinePage
         if (sortedTimelineItems.Length == 0)
             throw new InvalidOperationException("no timeline items found");
 
-        string templateFolder = "../../../Templates";
+        string templateFolder = Templates.TemplatePaths.GetTemplateFolder();
         ReportBuilder report = new(templateFolder, folderOf2pFolders);
 
         string[] experimentFilePaths =
