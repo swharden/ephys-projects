@@ -11,9 +11,8 @@ public static class Program
         }
         else if (args.Length == 1)
         {
-            Console.WriteLine("Analyzing subfolders in: {}");
-            Analysis.AnalyzeAllSubfolders(args[1], overwrite: false);
-            TimelinePage.MakeIndex(args[1]);
+            Console.WriteLine($"Analyzing 2P Folders in: {args[0]}");
+            AnalyzeAndIndex(args[0], overwrite: false);
         }
         else
         {
@@ -30,7 +29,7 @@ public static class Program
     static void DeveloperMain()
     {
         //AnalyzeAndIndexEverySubfolder(@"X:\Data\C57\Sigma-1R\tagged-S1R", true);
-        AnalyzeAndIndex(@"X:\Data\C57\Sigma-1R\tagged-S1R\2022-06-16-METH-20uM", true);
+        AnalyzeAndIndex(@"X:\Data\C57\practice\Nadine\2P\2P practice", true);
     }
 
     /// <summary>
