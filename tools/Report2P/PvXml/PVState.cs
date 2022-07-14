@@ -6,6 +6,8 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Collections.Generic;
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
 namespace Report2P.PvXml;
 
 /// <summary>
@@ -135,7 +137,8 @@ public class PVState
                 {
                     string index = indexedValueElement.Attribute("index").Value;
                     string value = indexedValueElement.Attribute("value").Value;
-                    string description = indexedValueElement.Attribute("description")?.Value;
+                    string description = indexedValueElement.Attribute("description")?.Value
+                        ?? throw new NullReferenceException();
                     values.Add(new IndexedValue(index, value, description));
                 }
             }

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
 namespace Report2P.PvXml.ScanTypes;
 
 public class ZSeries : IScan
