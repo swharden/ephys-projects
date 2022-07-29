@@ -137,8 +137,7 @@ public class PVState
                 {
                     string index = indexedValueElement.Attribute("index").Value;
                     string value = indexedValueElement.Attribute("value").Value;
-                    string description = indexedValueElement.Attribute("description")?.Value
-                        ?? throw new NullReferenceException();
+                    string description = indexedValueElement.Attribute("description")?.Value ?? string.Empty;
                     values.Add(new IndexedValue(index, value, description));
                 }
             }
