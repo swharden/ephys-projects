@@ -1,4 +1,6 @@
-﻿namespace Report2P.Experiment;
+﻿using BitMiracle.LibTiff.Classic;
+
+namespace Report2P.Experiment;
 
 internal class SingleImage : IExperiment
 {
@@ -65,7 +67,6 @@ internal class SingleImage : IExperiment
         if (overwrite == false && File.Exists(outputFilePath))
             return;
 
-        SciTIF.TifFile tif = new(tifPath);
-        tif.SavePng(outputFilePath, autoScale: true);
+        Imaging.AutoscaleAndSave(tifPath, outputFilePath);
     }
 }

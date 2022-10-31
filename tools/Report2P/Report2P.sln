@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Report2P", "Report2P.csproj", "{903A3F61-997C-42C1-8ACF-B76099400FCE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SciTIF", "..\..\..\SciTIF\src\SciTIF\SciTIF.csproj", "{AD96AF94-3DE6-4573-9EEF-EC8A38270D70}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{903A3F61-997C-42C1-8ACF-B76099400FCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{903A3F61-997C-42C1-8ACF-B76099400FCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{903A3F61-997C-42C1-8ACF-B76099400FCE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AD96AF94-3DE6-4573-9EEF-EC8A38270D70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD96AF94-3DE6-4573-9EEF-EC8A38270D70}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AD96AF94-3DE6-4573-9EEF-EC8A38270D70}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AD96AF94-3DE6-4573-9EEF-EC8A38270D70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

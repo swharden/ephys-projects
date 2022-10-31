@@ -86,22 +86,8 @@ internal class ZSeries : IExperiment
         }
 
         Log.Debug($"Projecting {tifs.Length} TIFs: {System.IO.Path.GetFileName(outputFilePath)}");
-
-        SciTIF.TifFile tifMax = new(tifs[0]);
-
-        for (int i = 1; i < tifs.Length; i++)
-        {
-            SciTIF.TifFile tif = new(tifs[i]);
-            for (int y = 0; y < tif.Height; y++)
-            {
-                for (int x = 0; x < tif.Width; x++)
-                {
-                    tifMax.Channels[0].Values[y, x] += tif.Channels[0].Values[y, x];
-                }
-            }
-        }
-
-        tifMax.SavePng(outputFilePath, autoScale: true);
+        
+        Imaging.ProjectAutoscaleAndSave(tifs, outputFilePath);
     }
 
     private void CreateAnalysisImages(bool overwrite = false)
@@ -136,7 +122,8 @@ internal class ZSeries : IExperiment
         for (int i = 0; i < tifPaths.Length; i++)
         {
             SciTIF.TifFile tif = new(tifPaths[i]);
-            values[i] = GetMean(tif.Channels[0].Values);
+            SciTIF.Image img = tif.GetImage();
+            values[i] = img.Values.Sum() / img.Values.Length;
         }
 
         double[] frameNumbers = Enumerable.Range(1, Scan.FrameCount).Select(x => (double)x).ToArray(); ;

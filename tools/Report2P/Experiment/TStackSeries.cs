@@ -118,8 +118,7 @@ internal class TStackSeries : IExperiment
             return;
         }
 
-        SciTIF.TifFile tif = new(tifPath);
-        tif.SavePng(outputFilePath, autoScale: true);
+        Imaging.AutoscaleAndSave(tifPath, outputFilePath);
     }
 
     private void CreateReferenceImages()

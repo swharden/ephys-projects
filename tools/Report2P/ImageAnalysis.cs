@@ -13,7 +13,8 @@ public static class ImageAnalysis
         for (int i = 0; i < tifPaths.Length; i++)
         {
             SciTIF.TifFile tif = new(tifPaths[i]);
-            values[i] = GetImageMean(tif.Channels[0].Values);
+            SciTIF.Image img = tif.GetImage();
+            values[i] = img.Values.Sum() / img.Values.Length;
         }
 
         return values;

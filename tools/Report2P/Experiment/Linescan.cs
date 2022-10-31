@@ -1,4 +1,6 @@
-﻿namespace Report2P.Experiment;
+﻿using ScottPlot.Drawing.Colormaps;
+
+namespace Report2P.Experiment;
 
 internal class Linescan : IExperiment
 {
@@ -82,10 +84,13 @@ internal class Linescan : IExperiment
         for (int i = 0; i < tifPathsR.Length; i++)
         {
             SciTIF.TifFile tifR = new(tifPathsR[i]);
-            SciTIF.TifFile tifG = new(tifPathsG[i]);
+            SciTIF.Image imgR = tifR.GetImage();
 
-            double[] dataR = CollapseHorizontally(tifR.Channels[0].Values);
-            double[] dataG = CollapseHorizontally(tifG.Channels[0].Values);
+            SciTIF.TifFile tifG = new(tifPathsG[i]);
+            SciTIF.Image imgG = tifR.GetImage();
+
+            double[] dataR = CollapseHorizontally(imgR);
+            double[] dataG = CollapseHorizontally(imgG);
 
             ScottPlot.Plot plt = new(600, 400);
 
@@ -99,6 +104,24 @@ internal class Linescan : IExperiment
             plt.SaveFig(saveFilePath);
         }
     }
+
+    private static double[] CollapseHorizontally(SciTIF.Image imgR)
+    {
+        double[] collapsed = new double[imgR.Height];
+        for (int y = 0; y < imgR.Height; y++)
+        {
+            double xSum = 0;
+            for (int x = 0; x < imgR.Width; x++)
+            {
+                int offset = y + imgR.Width + x;
+                xSum += imgR.Values[offset];
+            }
+            double xMean = xSum / imgR.Width;
+            collapsed[y] = xMean;
+        }
+        return collapsed;
+    }
+
     private static double[] CollapseHorizontally(double[,] values)
     {
         double[] collapsed = new double[values.GetLength(0)];
@@ -123,8 +146,7 @@ internal class Linescan : IExperiment
         if (overwrite == false && File.Exists(outputFilePath))
             return;
 
-        SciTIF.TifFile tif = new(tifPath);
-        tif.SavePng(outputFilePath, autoScale: true);
+        Imaging.AutoscaleAndSave(tifPath, outputFilePath);
     }
 
     private void CreateReferenceImages()

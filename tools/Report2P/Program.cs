@@ -29,7 +29,7 @@ public static class Program
     static void DeveloperMain()
     {
         //AnalyzeAndIndexEverySubfolder(@"X:\Data\C57\Sigma-1R\tagged-S1R", true);
-        AnalyzeAndIndex(@"X:\Data\zProjects\Oxytocin Biosensor\experiments\puff OXT\2022-07-29\2p", true);
+        AnalyzeAndIndex(@"X:\Data\zProjects\OT-Tom NMDA signaling\2P bpAP apply NMDA\2022-02-27-NMDA\2p", true);
     }
 
     /// <summary>

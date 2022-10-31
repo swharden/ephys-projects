@@ -94,7 +94,8 @@ internal class TImageSeries : IExperiment
         for (int i = 0; i < tifPaths.Length; i++)
         {
             SciTIF.TifFile tif = new(tifPaths[i]);
-            values[i] = GetMean(tif.Channels[0].Values);
+            SciTIF.Image img = tif.GetImage();
+            values[i] = img.Values.Sum() / img.Values.Length;
         }
 
         ScottPlot.Plot plt = new(600, 400);
@@ -136,8 +137,7 @@ internal class TImageSeries : IExperiment
             return;
         }
 
-        SciTIF.TifFile tif = new(tifPath);
-        tif.SavePng(outputFilePath, autoScale: true);
+        Imaging.AutoscaleAndSave(tifPath, outputFilePath);
     }
 
     private void CreateReferenceImages()
