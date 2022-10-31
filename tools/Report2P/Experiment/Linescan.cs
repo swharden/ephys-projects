@@ -73,37 +73,56 @@ internal class Linescan : IExperiment
 
     private void CreateAnalysisImages(bool overwrite = false)
     {
-        string saveFilePath = System.IO.Path.Combine(AutoanalysisFolder, "linescan_curves.png");
-        if ((overwrite == false) && (File.Exists(saveFilePath)))
-            return;
-
         string[] tifPaths = Directory.GetFiles(Path, "*.ome.tif").ToArray();
         string[] tifPathsR = tifPaths.Where(x => x.Contains("_Ch1_")).ToArray();
         string[] tifPathsG = tifPaths.Where(x => x.Contains("_Ch2_")).ToArray();
 
         for (int i = 0; i < tifPathsR.Length; i++)
         {
-            string redTifPath = tifPathsR[i];
-            SciTIF.TifFile tifR = new(redTifPath);
+            SciTIF.TifFile tifR = new(tifPathsR[i]);
             SciTIF.Image imgR = tifR.GetImage();
             double[] dataR = CollapseHorizontally(imgR);
 
-            string greenTifPath = tifPathsG[i];
-            SciTIF.TifFile tifG = new(greenTifPath);
+            SciTIF.TifFile tifG = new(tifPathsG[i]);
             SciTIF.Image imgG = tifG.GetImage();
             double[] dataG = CollapseHorizontally(imgG);
 
-            ScottPlot.Plot plt = new(600, 400);
-
-            plt.AddSignal(dataR, 1.0 / Scan.ScanLinePeriod, System.Drawing.Color.Red);
-            plt.AddSignal(dataG, 1.0 / Scan.ScanLinePeriod, System.Drawing.Color.Green);
-            plt.SetAxisLimits(yMin: 0);
-            plt.Title(System.IO.Path.GetFileName(Path));
-            plt.YLabel("PMT Value (AFU)");
-            plt.XLabel("Time (seconds)");
-
-            plt.SaveFig(saveFilePath);
+            PlotCurves(dataR, dataG, i + 1, overwrite);
         }
+    }
+
+    private void PlotCurves(double[] dataR, double[] dataG, int frame, bool overwrite)
+    {
+        string saveFilePathRaw = System.IO.Path.Combine(AutoanalysisFolder, $"linescan_raw_{frame}.png");
+        string saveFilePathRatio = System.IO.Path.Combine(AutoanalysisFolder, $"linescan_ratio_{frame}.png");
+        string name = System.IO.Path.GetFileName(Path);
+        if ((overwrite == false) && (File.Exists(saveFilePathRaw)))
+            return;
+
+        ScottPlot.Plot pltRaw = new(600, 400);
+        pltRaw.AddSignal(dataR, 1.0 / Scan.ScanLinePeriod, System.Drawing.Color.Red);
+        pltRaw.AddSignal(dataG, 1.0 / Scan.ScanLinePeriod, System.Drawing.Color.Green);
+        pltRaw.SetAxisLimits(yMin: 0);
+        pltRaw.Title($"{name} Raw Curves (Frame {frame})");
+        pltRaw.YLabel("PMT Value (AFU)");
+        pltRaw.XLabel("Time (seconds)");
+        pltRaw.SaveFig(saveFilePathRaw);
+
+        ScottPlot.Plot pltRatio = new(600, 400);
+        double[] ratio = new double[dataR.Length];
+        for (int i = 0; i < ratio.Length; i++)
+        {
+            ratio[i] = 100 * dataG[i] / dataR[i];
+            if (double.IsNaN(ratio[i]))
+            {
+                ratio[i] = 0;
+            }
+        }
+        pltRatio.AddSignal(ratio, 1.0 / Scan.ScanLinePeriod, System.Drawing.Color.Blue);
+        pltRatio.Title($"{name} Ratiometric Curve (Frame {frame})");
+        pltRatio.YLabel("G/R (%)");
+        pltRatio.XLabel("Time (seconds)");
+        pltRatio.SaveFig(saveFilePathRatio);
     }
 
     private static double[] CollapseHorizontally(SciTIF.Image imgR)
@@ -118,22 +137,6 @@ internal class Linescan : IExperiment
                 xSum += imgR.Values[offset];
             }
             double xMean = xSum / imgR.Width;
-            collapsed[y] = xMean;
-        }
-        return collapsed;
-    }
-
-    private static double[] CollapseHorizontally(double[,] values)
-    {
-        double[] collapsed = new double[values.GetLength(0)];
-        for (int y = 0; y < values.GetLength(0); y++)
-        {
-            double xSum = 0;
-            for (int x = 0; x < values.GetLength(1); x++)
-            {
-                xSum += values[y, x];
-            }
-            double xMean = xSum / values.GetLength(1);
             collapsed[y] = xMean;
         }
         return collapsed;
