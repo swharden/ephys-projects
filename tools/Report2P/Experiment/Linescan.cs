@@ -83,13 +83,14 @@ internal class Linescan : IExperiment
 
         for (int i = 0; i < tifPathsR.Length; i++)
         {
-            SciTIF.TifFile tifR = new(tifPathsR[i]);
+            string redTifPath = tifPathsR[i];
+            SciTIF.TifFile tifR = new(redTifPath);
             SciTIF.Image imgR = tifR.GetImage();
-
-            SciTIF.TifFile tifG = new(tifPathsG[i]);
-            SciTIF.Image imgG = tifR.GetImage();
-
             double[] dataR = CollapseHorizontally(imgR);
+
+            string greenTifPath = tifPathsG[i];
+            SciTIF.TifFile tifG = new(greenTifPath);
+            SciTIF.Image imgG = tifG.GetImage();
             double[] dataG = CollapseHorizontally(imgG);
 
             ScottPlot.Plot plt = new(600, 400);
@@ -169,6 +170,6 @@ internal class Linescan : IExperiment
 
         string[] ch2Paths = tifPaths.Where(x => x.Contains("_Ch2_")).ToArray();
         if (ch2Paths.Any())
-            ConvertTif(ch1Paths.First(), "data_ch2_");
+            ConvertTif(ch2Paths.First(), "data_ch2_");
     }
 }
