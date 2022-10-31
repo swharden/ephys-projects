@@ -114,7 +114,7 @@ internal class Linescan : IExperiment
             double xSum = 0;
             for (int x = 0; x < imgR.Width; x++)
             {
-                int offset = y + imgR.Width + x;
+                int offset = y * imgR.Width + x;
                 xSum += imgR.Values[offset];
             }
             double xMean = xSum / imgR.Width;
