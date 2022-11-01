@@ -5,3 +5,4 @@ obj/
 inspect/
 .vs/
 .vscode/
+tools/AbfLocator/abfs.txt
