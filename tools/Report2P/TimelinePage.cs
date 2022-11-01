@@ -130,7 +130,8 @@ internal class TimelinePage
         string[] experimentFilePaths =
         {
             Path.Combine(folderOf2pFolders, "experiment.txt"),
-            Path.Combine(Path.GetDirectoryName(folderOf2pFolders)!, "experiment.txt"),
+            Path.Combine(Path.GetFullPath(folderOf2pFolders+"/../"), "experiment.txt"),
+            Path.Combine(Path.GetFullPath(folderOf2pFolders+"/../../"), "experiment.txt"),
         };
 
         if (experimentFilePaths.Length == 0)
