@@ -93,6 +93,8 @@ public class PVState
         else
         {
             string[] xmlFilePaths = Directory.GetFiles(fileOrFolderPath, "*.xml");
+            if (xmlFilePaths.Length > 1)
+                xmlFilePaths = xmlFilePaths.Where(x => !x.EndsWith("MarkPoints.xml")).ToArray();
             if (xmlFilePaths.Length != 1)
                 throw new InvalidOperationException($"folder must have 1 XML file: {fileOrFolderPath}");
             return Path.GetFullPath(xmlFilePaths[0]);
